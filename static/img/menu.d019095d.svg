@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <g id="Icon_Circle_Sharp" data-name="Icon / Circle / Sharp" opacity="0.86">
-    <rect id="Box" width="24" height="24" fill="none"/>
-    <line id="선_40" data-name="선 40" x2="18" transform="translate(3 13.5)" fill="none" stroke="#000" stroke-width="1.5"/>
-    <line id="선_41" data-name="선 41" x2="11" transform="translate(3 20.5)" fill="none" stroke="#000" stroke-width="1.5"/>
-    <line id="선_42" data-name="선 42" x2="18" transform="translate(3 6.5)" fill="none" stroke="#000" stroke-width="1.5"/>
-  </g>
-</svg>
