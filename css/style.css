@@ -436,7 +436,9 @@ form {
 }
 
 .input input:focus, .input input:focus-visible, .input textarea:focus, .input textarea:focus-visible {
-    outline: 1px solid #F36910;
+    /*outline: 1px solid #F36910;*/
+    outline: none;
+    border-color: #F36910;    
 }
 
 .input textarea {
