@@ -569,7 +569,7 @@ footer .label {
     padding-right: 32px;
 }
 
-section.scroll .container .image{
+/*section.scroll .container .image{
     transition: all 0.2s;
     filter: grayscale(1);
 }
@@ -594,7 +594,7 @@ section.scroll.active .container h2{
 
 section.scroll.active .container h3{
     color: #FFB731;
-}
+}*/
 
 
 
