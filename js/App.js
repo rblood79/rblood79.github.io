@@ -1,0 +1,55 @@
+
+window.addEventListener('DOMContentLoaded', event => {
+    const down = document.querySelector('aside');
+    const sections = document.querySelectorAll('.scroll');
+    const nav = document.querySelector('nav');
+    const navList = document.querySelectorAll('.nav-item');
+
+    const navbar = document.body.querySelector('.navbar-nav');
+    const navbarToggler = document.body.querySelector('.navbar-toggler');
+
+    const responsiveNavItems = [].slice.call(
+        document.querySelectorAll('#mainNav .nav-link')
+    );
+
+    responsiveNavItems.map(function (responsiveNavItem) {
+        responsiveNavItem.addEventListener('click', () => {
+            if (window.getComputedStyle(navbarToggler).visibility !== 'hidden') {
+                navbarToggler.click();
+            }
+        });
+    });
+
+    navbarToggler.addEventListener('click', () => {
+        if (window.getComputedStyle(navbarToggler).visibility !== 'hidden') {
+            navbar.classList.toggle('active');
+        }
+    });
+
+    const options = {
+        root: null,
+        threshold: 0.4,
+    }
+
+    const callback = (entries, observer) => {
+        entries.forEach((e, index) => {
+            if (e.isIntersecting) {
+                e.target.classList.add('active');
+                e.target.id !== 'home' ? nav.classList.add('active') : nav.classList.remove('active');
+                e.target.id !== 'contact' ? down.classList.add('active') : down.classList.remove('active');
+                //
+                navList.forEach(link => {
+                    e.target.id === link.dataset.nav ? link.classList.add('active') : link.classList.remove('active')
+                });
+            } else {
+                e.target.classList.remove('active');
+            }
+        });
+
+        window.getComputedStyle(navbarToggler).visibility !== 'hidden' && navbar.classList.remove('active');
+    }
+
+    const observer = new IntersectionObserver(callback, options);
+
+    sections.forEach(section => observer.observe(section));
+});
