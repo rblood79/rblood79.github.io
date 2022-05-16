@@ -1,1 +1,201 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="./favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"/><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"><meta name="theme-color" content="#ffffff"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="./logo192.png"/><link rel="manifest" href="./manifest.json"/><title>군 소요물자 신청</title><link href="./static/css/2.04fa6ee0.chunk.css" rel="stylesheet"><link href="./static/css/main.27ef5359.chunk.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><script>!function(e){function r(r){for(var n,a,i=r[0],c=r[1],l=r[2],s=0,p=[];s<i.length;s++)a=i[s],Object.prototype.hasOwnProperty.call(o,a)&&o[a]&&p.push(o[a][0]),o[a]=0;for(n in c)Object.prototype.hasOwnProperty.call(c,n)&&(e[n]=c[n]);for(f&&f(r);p.length;)p.shift()();return u.push.apply(u,l||[]),t()}function t(){for(var e,r=0;r<u.length;r++){for(var t=u[r],n=!0,i=1;i<t.length;i++){var c=t[i];0!==o[c]&&(n=!1)}n&&(u.splice(r--,1),e=a(a.s=t[0]))}return e}var n={},o={1:0},u=[];function a(r){if(n[r])return n[r].exports;var t=n[r]={i:r,l:!1,exports:{}};return e[r].call(t.exports,t,t.exports,a),t.l=!0,t.exports}a.e=function(e){var r=[],t=o[e];if(0!==t)if(t)r.push(t[2]);else{var n=new Promise((function(r,n){t=o[e]=[r,n]}));r.push(t[2]=n);var u,i=document.createElement("script");i.charset="utf-8",i.timeout=120,a.nc&&i.setAttribute("nonce",a.nc),i.src=function(e){return a.p+"static/js/"+({}[e]||e)+"."+{3:"969a851e"}[e]+".chunk.js"}(e);var c=new Error;u=function(r){i.onerror=i.onload=null,clearTimeout(l);var t=o[e];if(0!==t){if(t){var n=r&&("load"===r.type?"missing":r.type),u=r&&r.target&&r.target.src;c.message="Loading chunk "+e+" failed.\n("+n+": "+u+")",c.name="ChunkLoadError",c.type=n,c.request=u,t[1](c)}o[e]=void 0}};var l=setTimeout((function(){u({type:"timeout",target:i})}),12e4);i.onerror=i.onload=u,document.head.appendChild(i)}return Promise.all(r)},a.m=e,a.c=n,a.d=function(e,r,t){a.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},a.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},a.t=function(e,r){if(1&r&&(e=a(e)),8&r)return e;if(4&r&&"object"==typeof e&&e&&e.__esModule)return e;var t=Object.create(null);if(a.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:e}),2&r&&"string"!=typeof e)for(var n in e)a.d(t,n,function(r){return e[r]}.bind(null,n));return t},a.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return a.d(r,"a",r),r},a.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},a.p="./",a.oe=function(e){throw console.error(e),e};var i=this.webpackJsonparmy=this.webpackJsonparmy||[],c=i.push.bind(i);i.push=r,i=i.slice();for(var l=0;l<i.length;l++)r(i[l]);var f=c;t()}([])</script><script src="./static/js/2.c49a081c.chunk.js"></script><script src="./static/js/main.f50742e9.chunk.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Creative MANGOSYSTEMS</title>
+    <!-- Web fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- Core CSS -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation-->
+    <nav class="navbar" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="#"><span class="m">MANGO</span><span class="s">SYSTEMS</span></a>
+            <ul class="navbar-nav">
+                <li data-nav="home" class="nav-item"><a class="nav-link" href="#home">시작</a></li>
+                <li data-nav="business" class="nav-item"><a class="nav-link" href="#business">하는일</a></li>
+                <li data-nav="service" class="nav-item"><a class="nav-link" href="#service">서비스</a></li>
+                <li data-nav="about" class="nav-item"><a class="nav-link" href="#about">회사소개</a></li>
+                <li data-nav="contact" class="nav-item"><a class="nav-link" href="#contact">문의</a></li>
+            </ul>
+            <button class="navbar-toggler">.</button>
+        </div>
+    </nav>
+    <!-- home-->
+    <header class="page-section scroll" id="home">
+        <div class="container">
+            <img class="logo" alt="망고시스템즈" src="assets/logo.png" />
+            <h3 class="headerTitle">생각에 혁신을 더해 좋은 세상을 만듭니다</h3>
+            <!--<a class="contactBtn" href="#contact">컨설팅의뢰</a>-->
+        </div>
+    </header>
+
+    <!-- ment -->
+
+    <section class="side-section">
+        <div class="container">
+            <h2 class="sectionLabel">망고시스템즈는</h2>
+            <h3 class="sectionTitle">어느것 하나 놓치지 않습니다</h2>
+                <p class="sectionText">
+                    4차 산업혁명시대의 주요 자원으로 ‘데이터’가 주목 받고 있습니다. 데이터가 쌓이면 빅데이터가 되는데요. 이렇게 만들어진 빅데이터를 가공하고 분석하여 사용자가 원하는 분야에 적용할
+                    수 있도록 유의미한 정보를 이끌어내는 분석 전문가를 ‘데이터 사이언티스트(Data Scientist)’라고 합니다.
+                </p>
+                <img class="stickyBottom" src="assets/portrait-of-illuminated-laptop.jpg" alt="...">
+        </div>
+    </section>
+
+    <!-- business-->
+    <section class="page-section scroll" id="business">
+        <div class="container">
+            <h2 class="sectionLabel">토탈 시스템개발 · SI</h2>
+            <h3 class="sectionTitle">시스템 설계부터 전문 개발까지</h3>
+            <div class="grid">
+                <div class="item half">
+                    <p class="sectionText">망고시스템즈는 고객사의 요구 사항과 더불어<br />
+                        보다 쉽고 완벽한 관리를 위해<br />
+                        전문적인 업무분석가 로 부터 철저한 분석과<br />
+                        고객의 요구사항을 기반으로 체계적인 프로세스를 정립하고</p>
+
+                    <p class="sectionText">
+                        도출된 데이터를 토대로 낭비되는 시간과 자원을 최소화한 설계<br />
+                        세밀한 가이드라인을 설정하고 공통 가이드라인을 기준으로<br />
+                        보다 완벽한 시스템을 구축하기위해 노력합니다</p>
+
+                    <p class="sectionText">
+                        또한 항공기의 기체 시스템의 운영과 더불어 자재관리 인력관리 시스템등 전반적인 솔루션으로<br />
+                        보다 안전한 환경을 제공합니다</p>
+                </div>
+
+                <div class="item c2"><span class="image business0"></span></div>
+                <div class="item"><span class="image business1"></span></div>
+                <div class="item"><span class="image business2"></span></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- service-->
+    <section class="page-section scroll" id="service">
+        <div class="container">
+            <h2 class="sectionLabel">유지보수 · SM</h2>
+            <h3 class="sectionTitle">막힘없이 원활한 업무 지원</h3>
+            <div class="grid">
+                <div class="item half2">
+                    <p class="sectionText">
+                        현재 운영중인 시스템의 기능을 새로운 환경 변화에 적응되도록 <br />
+                        고객의 요구에 능동적으로 대응하여<br />업무흐름을 방해하지 않게
+                        현재 시스템의 오류를 처리하여<br />고객사의 만족을 증가 시켜드립니다
+                    </p>
+                    <p class="sectionText">
+                        또한 해외사업까지도 완벽하게 지원해
+                        드립니다</p>
+                </div>
+
+                <div class="item"><span class="image service0"></span></div>
+                <div class="item h2"><span class="image service1"></span></div>
+                <div class="item w2"><span class="image service2"></span></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- about-->
+    <section class="page-section scroll" id="about">
+        <div class="container">
+            <h2 class="sectionLabel">전문적인 기술력</h2>
+            <h3 class="sectionTitle">숙련된 노하우와 치밀한 기술력</h3>
+            <div class="grid">
+                <div class="item wh">
+                    <p class="sectionText">
+                        미래의 산업은, 전문적인 기술과, know-how가 융합된 산업의 변화가 이루어질 것입니다.<br />
+                        이에 맞추어 저희 망고시스템즈는 우수한 성능과 안전한 환경을 위해서 2020년에 설립되었습니다.<br /><br />
+                        당사의 최적화된 기술은 시간 환경 까지 다양하고 완벽한 고객 맞춤 솔루션에 주력을 하고 있으며,<br />
+                        이로 인한 기술의 발전 국가의 기반산업과, 경제 발전을 위한 모든 산업분야에 필수적으로<br />
+                        사용되어지는 프로그램으로 IT업계에 기여하고 있습니다. </p>
+                </div>
+
+                <div class="item w4"><span class="image about0"></span></div>
+                <div class="item wh">
+                    <p class="sectionText">다가올 미래에 전기, 전자, 반도체, 항공, 선박, 인공위성등 4차산업 전반적으로 다양한 분야에 활용되어<br />
+                        기술발전에 앞장서서, 신뢰 받는 제품으로 기술개발 및 생산 공급을<br />
+                        고객에게 최고의 만족을 제공할 수 있도록<br />
+                        망고시스템즈는 임직원 전원 무한한 노력을 강구하겠습니다.<br />
+                        고객 여러분의 지속적인 관심과 지도 편달을 부탁 드리겠습니다. 감사합니다.</p>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </section>
+
+    <!-- contact-->
+    <section class="page-section scroll" id="contact">
+        <div class="container">
+            <div class="row">
+                <h2 class="sectionLabel">문의하기</h2>
+                <h3 class="sectionTitle">빠른시간내에 답변 드리겠습니다</h3>
+                <form class="form">
+                    <div class="input">
+                        <label for="name">담당자</label>
+                        <input id="name" type="text" placeholder="이름을 입력하세요">
+                    </div>
+                    <div class="input">
+                        <label for="company">회사명</label>
+                        <input id="company" type="text" placeholder="회사명을 입력하세요">
+                    </div>
+                    <div class="input">
+                        <label for="tel">연락처</label>
+                        <input id="tel" type="text" placeholder="연락 받으실 주소를 입력하세요"
+                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                            maxlength="12">
+                    </div>
+                    <div class="input">
+                        <label for="context">문의내용</label>
+                        <textarea id="context" rows="12" placeholder="궁금하신 내용을 입력하세요"></textarea>
+                    </div>
+                    <div class="buttonGroup"><button type="submit" class="button submit">보내기</button><button
+                            type="reset" class="button reset">취소</button></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logoContainer"><img class="logo" alt="망고시스템즈" src="assets/logo.png" /></div>
+            <div class="content">
+                <address class="addr">
+                    <span class="label">본사주소</span>경상남도 진주시 동부로169번길 12 윙스타워 A동 1703호
+                </address>
+                <!-- <address class="addr">
+                    <span class="label">사천지사</span>경상남도 사천시 용당리 588 한국우주항공산업
+                </address> -->
+                <div class="email"><span class="label">대표메일</span><a
+                        href="mailto:ha7095@nate.com?body=문의내용을 넣어주세요">ha7095@nate.com</a></div>
+                <div class="tel"><span class="label">대표번호</span><a href="tel:010-6765-0712">010-6765-0712</a></div>
+            </div>
+            <div class="copyright">ⓒ MANGOSYSTEMS Co, LTD. All Rights Reserved</div>
+        </div>
+
+    </footer>
+
+    <aside>
+        <img class="down" alt="down" src="assets/down.png" />
+        <span>scroll down</span>
+    </aside>
+    <script src="js/App.js"></script>
+</body>
+
+</html>
