@@ -336,7 +336,7 @@ header .container {
 
 aside {
     position: fixed;
-    bottom: 56px;
+    bottom: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
