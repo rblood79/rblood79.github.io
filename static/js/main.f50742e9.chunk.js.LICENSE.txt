@@ -1,1 +1,0 @@
-//!reg_num.test(idNum) ? setNumber('fail') : !reg_num.test(pw) && setPw('fail');
