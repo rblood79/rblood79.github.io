@@ -17,6 +17,14 @@ p {
     text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.8);
 }
 
+b {
+    color: #FFB731;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: #F36910;
+    text-underline-position: under;
+}
+
 p+p {
     margin-top: 24px;
 }
@@ -47,7 +55,7 @@ html {
     font-weight: 400;
     font-size: 14px;
     color: #313131;
-    background-color: #FFB731;
+    /*background-color: #FFB731;*/
 
     scroll-behavior: smooth;
 }
@@ -101,6 +109,7 @@ nav .container .navbar-brand {
 
     z-index: 2;
 }
+
 
 nav .container .navbar-brand .m {
     color: #F36910;
@@ -178,7 +187,7 @@ nav .container .nav-item .nav-link {
     font-size: 16px;
     font-weight: 500;
     padding: 16px;
-    min-width: 80px;
+    min-width: 96px;
 
     transition: color 0.16s ease-in-out;
     transition-delay: 0.18s;
@@ -188,11 +197,12 @@ nav .container .nav-item.active .nav-link, nav .container .nav-item:hover .nav-l
     color: #F36910;
 }
 
+
 nav .container .nav-item::before {
     content: '';
     display: block;
     position: absolute;
-    background-color: #f00;
+    background-color: #F36910;
     width: 100%;
     height: 4px;
     bottom: 0;
@@ -326,7 +336,7 @@ header .container {
     margin: 36px 0;
     text-align: center;
     text-decoration: underline;
-    text-decoration-color: rgba(255,255,255,0.36);
+    text-decoration-color: rgba(255, 255, 255, 0.36);
     text-underline-position: under;
 }
 
@@ -361,13 +371,17 @@ aside.active {
     opacity: 1;
 }
 
+aside i {
+    font-size: 36px;
+}
+
 .down {
     width: 36px;
     margin-bottom: 4px;
 }
 
 .grid {
-    margin-top: 36px;
+    margin-top: 24px;
     display: grid;
     /*grid-template-columns: repeat(auto-fill, minmax(calc(25% - 48px), auto));*/
     grid-template-columns: repeat(4, 1fr);
@@ -433,6 +447,7 @@ aside.active {
 
 
 .item.text {
+    border: 1px solid rgba(0, 0, 0, 0.24);
     background-color: rgba(255, 255, 255, 0.16);
     background-color: rgba(0, 0, 0, 0.36);
     border-radius: 8px;
@@ -517,38 +532,58 @@ form {
     background-size: cover;
     background-position: center;
     /*background-attachment: fixed;*/
+    justify-content: center;
+    align-items: flex-end;
+    padding: 16px;
+    color: #FFD474;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .business0 {
-    background-image: url("../assets/woman-reads-through-meeting-info.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/woman-reads-through-meeting-info.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .business1 {
-    background-image: url("../assets/sticky-note-to-ship-code.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/sticky-note-to-ship-code.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .business2 {
-    background-image: url("../assets/business-meeting-over-coffee.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/business-meeting-over-coffee.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .service0 {
-    background-image: url("../assets/alex-kotliarskyi-QBpZGqEMsKg-unsplash.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/alex-kotliarskyi-QBpZGqEMsKg-unsplash.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .service1 {
-    background-image: url("../assets/marek-levak-GNVxujZ_CxU-unsplash.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/marek-levak-GNVxujZ_CxU-unsplash.jpg");
+    background-size: cover;
 }
 
 .service2 {
-    background-image: url("../assets/office-team-business-meeting.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/office-team-business-meeting.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .about0 {
-    background-image: url("../assets/business-women-shaking-hands.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/business-women-shaking-hands.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .about1 {
-    background-image: url("../assets/businessman-in-glass-elevator-going-up.jpg");
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/businessman-in-glass-elevator-going-up.jpg");
+    background-size: cover;
 }
 
 footer {
@@ -646,7 +681,6 @@ section.scroll.active .container h3{
     }
 
     nav .container .nav-item::before {
-        height: 1px;
         width: calc(100% - 32px);
         left: 16px;
     }
@@ -692,7 +726,7 @@ section.scroll.active .container h3{
     section {
         justify-content: center;
         align-items: flex-start;
-        padding: 48px 0;
+        padding: 56px 0;
         background-attachment: inherit !important;
     }
 

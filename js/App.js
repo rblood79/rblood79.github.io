@@ -5,8 +5,8 @@ window.addEventListener('DOMContentLoaded', event => {
     const nav = document.querySelector('nav');
     const navList = document.querySelectorAll('.nav-item');
 
-    const navbar = document.body.querySelector('.navbar-nav');
-    const navbarToggler = document.body.querySelector('.navbar-toggler');
+    const navbar = document.querySelector('.navbar-nav');
+    const navbarToggler = document.querySelector('.navbar-toggler');
 
     const responsiveNavItems = [].slice.call(
         document.querySelectorAll('#mainNav .nav-link')
@@ -28,7 +28,7 @@ window.addEventListener('DOMContentLoaded', event => {
 
     const options = {
         root: null,
-        threshold: 0.4,
+        threshold: 0.5,
     }
 
     const callback = (entries, observer) => {
@@ -46,10 +46,9 @@ window.addEventListener('DOMContentLoaded', event => {
             }
         });
 
-        window.getComputedStyle(navbarToggler).visibility !== 'hidden' && navbar.classList.remove('active');
+       //window.getComputedStyle(navbarToggler).visibility !== 'hidden' && navbar.classList.remove('active');
     }
 
     const observer = new IntersectionObserver(callback, options);
-
     sections.forEach(section => observer.observe(section));
 });
