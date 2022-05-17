@@ -376,7 +376,7 @@ header .container {
 .stickyBottom {
     position: sticky;
     bottom: 0;
-    width: 86%;
+    width: 100%;
 }
 
 .stickyBottom::after {
