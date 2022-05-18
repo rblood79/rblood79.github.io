@@ -280,6 +280,10 @@ header {
     z-index: 1;
 }
 
+#contact h1, #contact h2, #contact h3 {
+    text-shadow: none;
+}
+
 header .container {
     display: flex;
     justify-content: center;
