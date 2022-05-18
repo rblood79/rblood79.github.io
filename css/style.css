@@ -84,28 +84,16 @@ body {
     letter-spacing: 0.0625em;
 }
 
-/*body::before {
-    content: '';
-    position: fixed;
-    background-image: url("../assets/logo.png");
-    background-repeat: repeat;
-    width: 100%;
-    height: 100%;
-    display: block;
-    z-index: 0;
-    pointer-events: none;
-}*/
 
 nav {
     display: flex;
     align-items: center;
     justify-content: center;
     position: fixed;
-    position: -webkit-fixed;
     top: 0;
     width: 100%;
     transition: background-color 0.6s;
-    z-index: 10;
+    z-index: 100;
 }
 
 nav.active {
@@ -277,7 +265,7 @@ header {
 }
 
 #contact {
-    z-index: 1;
+    z-index: 11;
 }
 
 #contact h1, #contact h2, #contact h3 {
@@ -417,14 +405,8 @@ aside {
     font-size: 14px;
     font-weight: 500;
     width: 100%;
-
-    transition: opacity 0.24s ease-in-out;
-    opacity: 0;
     pointer-events: none;
-}
-
-aside.active {
-    opacity: 1;
+    z-index: 10;
 }
 
 aside i {
@@ -434,7 +416,7 @@ aside i {
 
 
 .grid {
-    margin-top: 24px;
+    margin-top: 16px;
     display: grid;
     /*grid-template-columns: repeat(auto-fill, minmax(calc(25% - 48px), auto));*/
     grid-template-columns: repeat(4, 1fr);
@@ -606,6 +588,9 @@ form {
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
+
+    transition: all 0.6s ease-in-out;
+    transition-delay: 1s;
 }
 
 .image i {
@@ -626,7 +611,7 @@ form {
 .business0 {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/woman-reads-through-meeting-info.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: left center;
 }
 
 .business1 {
@@ -638,13 +623,13 @@ form {
 .business2 {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/business-meeting-over-coffee.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
 }
 
 .service0 {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/alex-kotliarskyi-QBpZGqEMsKg-unsplash.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
 }
 
 .service1 {
@@ -655,13 +640,13 @@ form {
 .service2 {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/office-team-business-meeting.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
 }
 
 .about0 {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/business-women-shaking-hands.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
 }
 
 .about1 {
@@ -676,7 +661,7 @@ footer {
     align-items: center;
     background-color: #fff;
     box-shadow: 0 4px 8px rgb(0,0,0,0.24);
-    z-index: 1;
+    z-index: 11;
 }
 
 .content {
@@ -783,6 +768,11 @@ section.scroll.active .container h3{
         transition: all 0.3s ease-in-out;
         transform: translateY(-337px);
         opacity: 0;
+    }
+
+    .navbar-nav {
+        border-radius: 0 0 16px 16px;
+        overflow: hidden;
     }
 
     .navbar-nav .nav-item {

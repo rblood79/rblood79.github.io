@@ -1,6 +1,6 @@
 
 window.addEventListener('DOMContentLoaded', event => {
-    const down = document.querySelector('aside');
+    const submit = document.querySelector('.submit');
     const sections = document.querySelectorAll('.scroll');
     const nav = document.querySelector('nav');
     const navList = document.querySelectorAll('.nav-item');
@@ -32,11 +32,11 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
     const callback = (entries, observer) => {
+        navbar.classList.remove('active');
         entries.forEach((e, index) => {
             if (e.isIntersecting) {
                 e.target.classList.add('active');
                 e.target.id !== 'home' ? nav.classList.add('active') : nav.classList.remove('active');
-                e.target.id !== 'contact' ? down.classList.add('active') : down.classList.remove('active');
                 //
                 navList.forEach(link => {
                     e.target.id === link.dataset.nav ? link.classList.add('active') : link.classList.remove('active')
@@ -45,10 +45,14 @@ window.addEventListener('DOMContentLoaded', event => {
                 e.target.classList.remove('active');
             }
         });
-
-       //window.getComputedStyle(navbarToggler).visibility !== 'hidden' && navbar.classList.remove('active');
     }
 
     const observer = new IntersectionObserver(callback, options);
     sections.forEach(section => observer.observe(section));
+
+    //
+    submit.addEventListener('click', (e)=> {
+        e.preventDefault;
+        alert('폼 전송~ 어디로~~');
+    })
 });
