@@ -33,7 +33,7 @@ window.addEventListener('DOMContentLoaded', event => {
 
     const callback = (entries, observer) => {
         navbar.classList.remove('active');
-        entries.forEach((e, index) => {
+        entries.forEach((e) => {
             if (e.isIntersecting) {
                 e.target.classList.add('active');
                 e.target.id !== 'home' ? nav.classList.add('active') : nav.classList.remove('active');

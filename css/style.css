@@ -753,8 +753,8 @@ section.scroll.active .container h3{
     }
 
     nav .container .nav-item::before {
-        width: calc(100% - 32px);
-        left: 16px;
+        width: 96px;
+        left: calc(50% - 48px);
     }
 
     .navbar-nav {
@@ -764,20 +764,18 @@ section.scroll.active .container h3{
         left: 0;
         top: 0px;
         padding-top: 56px;
-        background-color: #fff;
 
         transition: all 0.3s ease-in-out;
         transform: translateY(-337px);
         opacity: 0;
     }
 
-    .navbar-nav {
-        border-radius: 0 0 16px 16px;
-        overflow: hidden;
-    }
-
     .navbar-nav .nav-item {
         background-color: #fff;
+    }
+
+    .navbar-nav .nav-item:last-child {
+        border-radius: 0 0 16px 16px;
     }
 
     .navbar-nav .nav-item:first-child {
@@ -789,13 +787,24 @@ section.scroll.active .container h3{
         transform: translateY(0px);
     }
 
-    .navbar-nav.active::before {
+    .navbar-nav::before {
         content: '';
         width: 100%;
-        height: 100vh;
+        height: calc(100vh + 100%);
         display: block;
         position: fixed;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.1) 100%, #000 10%);
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.1) 100%, #000 0%);
+        z-index: 0;
+    }
+
+    .navbar-nav::after {
+        content: '';
+        width: 100%;
+        height: 56px;
+        display: block;
+        position: fixed;
+        background: #fff;
+        top: 0;
         z-index: 0;
     }
 
