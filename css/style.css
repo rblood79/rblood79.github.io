@@ -28,12 +28,13 @@ b {
 }
 
 b::before {
-    content: '＋';
+    content: '+';
     color: #FF9D04;
+
 }
 
 b::after {
-    content: '＋';
+    content: '+';
     color: #FF9D04;
 }
 
@@ -73,7 +74,7 @@ html {
     color: #313131;
     /*background-color: #FFB731;*/
 
-    scroll-behavior: smooth;
+    /*scroll-behavior: smooth;*/
 }
 
 
