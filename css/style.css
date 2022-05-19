@@ -420,13 +420,25 @@ aside {
     z-index: 10;
 }
 
+/*aside::before {
+    content: 'AA';
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 1) 100%, #000 100%);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+    z-index: 0;
+}*/
+
 aside i {
     font-size: 36px;
     margin-bottom: 4px;
+    z-index: 1;
 }
 
 aside span {
     color: #a7a7a7;
+    z-index: 1;
 }
 
 
