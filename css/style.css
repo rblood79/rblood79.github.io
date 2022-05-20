@@ -267,6 +267,7 @@ header {
 
 #contact {
     z-index: 11;
+    background-color: #fff;
 }
 
 #contact h1, #contact h2, #contact h3 {
@@ -297,14 +298,14 @@ header .container {
 .headerTitle {
     font-size: 34px;
     font-weight: 500;
-    padding: 16px 0;
+    padding: 8px 0;
     color: #fff;
     text-align: center;
     text-shadow: none;
-    background-image: linear-gradient(45deg,#f36910 10%,#ffc871 50%,#ff9d06 80%);
+    /*background-image: linear-gradient(45deg,#f36910 10%,#ffc871 50%,#ff9d06 80%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    width: fit-content;
+    width: fit-content;*/
 }
 
 .page-section {
@@ -695,21 +696,43 @@ footer {
     flex-direction: row;
     flex-wrap: wrap;
     /* background-color: #313131; */
-    border-top: 1px solid #efefef;
-    border-bottom: 1px solid #efefef;
     padding: 16px 0;
 }
 
 .logoContainer {
+    margin: 16px 0;
+    height: 225px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    padding: 8px 16px 24px;
+    align-items: center;
+    border-radius: 8px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/kelvin-han-KZcLuWqO9zo-unsplash.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.logoGroup {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 7px;
+}
+
+.logoGroup .m {
+    color: #F36910;
+}
+
+.logoGroup .s {
+    color: #FF9D04;
 }
 
 .copyright {
     font-size: 14px;
     color: #767676;
     padding: 16px 0 40px;
+    border-top: 1px solid #efefef;
 }
 
 
