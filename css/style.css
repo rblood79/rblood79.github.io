@@ -637,13 +637,13 @@ form {
 .business0 {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/woman-reads-through-meeting-info.jpg");
     background-size: cover;
-    background-position: left center;
+    background-position: center center;
 }
 
 .business1 {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 100%, #000 100%), url("../assets/sticky-note-to-ship-code.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: center center;
 }
 
 .business2 {
