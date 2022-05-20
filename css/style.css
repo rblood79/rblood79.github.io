@@ -323,7 +323,7 @@ header .container {
 .sectionLabel {
     font-size: 24px;
     font-weight: 500;
-    color: #FF9D04;
+    color: #fff;
 }
 
 .sectionTitle {
@@ -689,6 +689,10 @@ footer {
     background-color: #fff;
     box-shadow: 0 4px 8px rgb(0,0,0,0.24);
     z-index: 11;
+}
+
+footer .sectionLabel {
+    color: #767676;
 }
 
 .content {
