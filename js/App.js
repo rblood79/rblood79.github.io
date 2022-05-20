@@ -51,8 +51,8 @@ window.addEventListener('DOMContentLoaded', event => {
     sections.forEach(section => observer.observe(section));
 
     //문의사항 보내기
-    submit.addEventListener('click', (e)=> {
+    /*submit.addEventListener('click', (e)=> {
         e.preventDefault;
         alert('폼 전송~ 어디로~~');
-    })
+    })*/
 });
