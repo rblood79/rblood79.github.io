@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+  <g id="그룹_136" data-name="그룹 136" transform="translate(-81 -185)">
+    <rect id="사각형_1146" data-name="사각형 1146" width="42" height="42" transform="translate(81 185)" fill="#fff"/>
+    <path id="Icon_map-volume-control-telephone" data-name="Icon map-volume-control-telephone" d="M16.883,17.573h3.176c.952,0,1.561-1.114,1.561-1.866V7.749c0-.753-.609-.543-1.561-.543H16.883Zm0,15.078h3.176a1.628,1.628,0,0,1,1.561,1.628v7.956a1.719,1.719,0,0,1-1.561,1.725H16.883ZM12.69,25.112c-.027-7.272,1.691-7.539,2.671-7.539H15.7V7.206h-.405C13.549,7.206,5.04,9.488,5.04,25.582s8.509,18.377,10.253,18.377H15.7V32.651h-.338C14.381,32.651,12.716,32.38,12.69,25.112Z" transform="translate(72.994 197.816) rotate(-45)" fill="#e1e1e4"/>
+  </g>
+</svg>
