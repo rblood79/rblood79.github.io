@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import context from '../component/Context';
@@ -23,20 +23,17 @@ const App = (props) => {
     if (storedUser && storedYear) {
       setUser(storedUser);
       setYear(storedYear);
-    } else {
-      setUser(null);
-      setYear(null);
     }
   }, [setUser, setYear]);
 
   // 입력 변경 핸들러
-  const onChange = useCallback((e) => {
+  const onChange = (e) => {
     const { name, value } = e.target;
-    setInputs((prevInputs) => ({
+    setInputs(prevInputs => ({
       ...prevInputs,
       [name]: value || "",
     }));
-  }, []);
+  };
 
   const hashPassword = async (password) => {
     const encoder = new TextEncoder();
@@ -49,8 +46,9 @@ const App = (props) => {
 
   // 로그인 체크
   const onCheck = async () => {
-    const hashedPw = await hashPassword(pw);  // 비밀번호를 해시 처리
-    //console.log(hashedPw)
+    if (!number || !pw) return; // 입력값이 없으면 아무 작업도 하지 않음
+
+    const hashedPw = await hashPassword(pw); // 비밀번호 해시 처리
     const docRef = doc(props.manage, "ini");
     const docSnap = await getDoc(docRef);
 
@@ -66,11 +64,13 @@ const App = (props) => {
         localStorage.setItem('user', number);
         localStorage.setItem("year", JSON.stringify(data.year));
 
-        number === data.adminID && await setDoc(doc(props.manage, "ini"), {
-          log: {
-            ['GT_' + new Date().getTime()]: serverTimestamp() // 고유한 필드명으로 데이터 추가
-          }
-        }, { merge: true });
+        if (number === data.adminID) {
+          await setDoc(doc(props.manage, "ini"), {
+            log: {
+              ['GT_' + new Date().getTime()]: serverTimestamp() // 고유한 필드명으로 데이터 추가
+            }
+          }, { merge: true });
+        }
 
         history.push('/');
       } else {
@@ -146,7 +146,14 @@ const App = (props) => {
           </div>
           <div className='controll'>
             <div className='buttonContainer'>
-              <button className={'button sign'} type="button" onClick={onCheck}>확인</button>
+              <button
+                className={'button sign'}
+                type="button"
+                onClick={onCheck}
+                disabled={!number || !pw} // 아이디나 비밀번호가 비어있으면 비활성화
+              >
+                확인
+              </button>
             </div>
           </div>
         </form>
