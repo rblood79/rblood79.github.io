@@ -48,11 +48,13 @@ const App = (props) => {
         (number === data.adminID && pw === data.adminPW) ||
         (number === data.rootID && pw === data.rootPW)
       ) {
+        // data.year가 없으면 기본값 설정
+        const yearData = data.year ? data.year : {};
         setUser(number);
-        setYear(data.year);
+        setYear(yearData);
 
         localStorage.setItem('user', number);
-        localStorage.setItem("year", JSON.stringify(data.year));
+        localStorage.setItem("year", JSON.stringify(yearData));
 
         if (number === data.adminID) {
           await setDoc(doc(props.manage, "ini"), {
