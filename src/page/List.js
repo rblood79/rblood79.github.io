@@ -24,18 +24,28 @@ const App = (props) => {
   return (
     <div className='resultContainer'>
       {/* 기존 UI */}
-      AAAAA
-      {/* 추가: 조회된 "정신건강 테스트" 데이터 출력 */}
       <div>
         {mentalTests.map(test => (
           <div key={test.id}>
             <h3>{test.test_name}</h3>
             <p>ID: {test.test_id}</p>
-            {/* 추가: 질문 목록 표시 */}
+            {/* 질문 목록 표시 - 순번 추가 및 라디오 그룹 적용 */}
             {test.questions && test.questions.map((q, idx) => (
               <div key={idx}>
-                <strong>문제:</strong> {q.question}<br />
-                <strong>보기:</strong> {q.options.join(', ')}
+                <strong>{`Q${idx + 1} 문제:`}</strong> {q.question}<br />
+                <div>
+                  {q.options.map((option, optionIndex) => (
+                    <div key={optionIndex}>
+                      <input
+                        type="radio"
+                        id={`question-${test.id}-${idx}-${optionIndex}`}
+                        name={`question-${test.id}-${idx}`}
+                        value={option}
+                      />
+                      <label htmlFor={`question-${test.id}-${idx}-${optionIndex}`}>{option}</label>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

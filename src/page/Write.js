@@ -33,9 +33,14 @@ const Write = (props) => {
 			alert('test_id는 필수 입니다.');
 			return;
 		}
+		// 옵션 문자열에 콤마가 있으면 콤마 기준으로, 없으면 줄바꿈 기준으로 분리 후 공백 제거
+		const optionsArray = options.includes(',') 
+			? options.split(',') 
+			: options.split('\n');
+		const trimmedOptions = optionsArray.map(opt => opt.trim()).filter(opt => opt !== '');
 		const newQuestion = {
 			question: question,
-			options: options.split('\n').filter(opt => opt.trim() !== '')
+			options: trimmedOptions
 		};
 		const docRef = doc(props.manage, testId);
 		const docSnap = await getDoc(docRef);
@@ -87,7 +92,7 @@ const Write = (props) => {
 			</div>
 			<div>
 				{/* 라벨 변경: 보기: */}
-				<label>보기 (줄바꿈으로 구분):</label>
+				<label>보기 (","로 구분):</label>
 				<textarea value={options} onChange={onChangeField(setOptions)} placeholder="옵션을 입력하세요"></textarea>
 			</div>
 			<hr />
