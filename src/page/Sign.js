@@ -37,39 +37,53 @@ const App = (props) => {
 
   // 로그인 체크
   const onCheck = async () => {
-    if (!number || !pw) return; // 입력값이 없으면 아무 작업도 하지 않음
+    if (!number || !pw) return;
 
-    const docRef = doc(props.manage, "ini");
-    const docSnap = await getDoc(docRef);
+    const iniDocRef = doc(props.manage, "ini");
+    const iniDocSnap = await getDoc(iniDocRef);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+    if (iniDocSnap.exists()) {
+      const data = iniDocSnap.data();
+
       if (
         (number === data.adminID && pw === data.adminPW) ||
         (number === data.rootID && pw === data.rootPW)
       ) {
-        // data.year가 없으면 기본값 설정
         const yearData = data.year ? data.year : {};
         setUser(number);
         setYear(yearData);
-
         localStorage.setItem('user', number);
         localStorage.setItem("year", JSON.stringify(yearData));
 
         if (number === data.adminID) {
-          await setDoc(doc(props.manage, "ini"), {
+          await setDoc(iniDocRef, {
             log: {
-              ['GT_' + new Date().getTime()]: serverTimestamp() // 고유한 필드명으로 데이터 추가
+              ['GT_' + new Date().getTime()]: serverTimestamp()
             }
           }, { merge: true });
         }
-
         history.push('/');
       } else {
-        setInputs({
-          number: '',
-          pw: ''
-        });
+        // 일반 사용자 로그인 처리
+        const userDocRef = doc(props.manage, "users");
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          if (userData.password === pw) {
+            // 일반 사용자 로그인 성공 처리
+            setUser(number);
+            setYear(userData.year ? userData.year : {});
+            localStorage.setItem('user', number);
+            localStorage.setItem("year", JSON.stringify(userData.year ? userData.year : {}));
+            history.push('/');
+          } else {
+            alert('비밀번호가 일치하지 않습니다.');
+            setInputs({ number: '', pw: '' });
+          }
+        } else {
+          alert('사용자가 존재하지 않습니다.');
+          setInputs({ number: '', pw: '' });
+        }
       }
     } else {
       console.log("No such document!");
