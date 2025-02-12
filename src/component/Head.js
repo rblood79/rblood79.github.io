@@ -35,7 +35,7 @@ const App = (props) => {
     <header className="head">
       <nav className='nav sub'>
         <div className='headGroup'>
-          <div className='headTitle'><img src={logo} alt='MND' /><span>과제관리대장</span></div>
+          <div className='headTitle'><img src={logo} alt='MND' /><span>피로도관리체크</span></div>
           {
             isMobile &&
             <>
