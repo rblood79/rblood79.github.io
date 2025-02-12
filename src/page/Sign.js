@@ -35,28 +35,18 @@ const App = (props) => {
     }));
   };
 
-  const hashPassword = async (password) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-  };
-
   // 로그인 체크
   const onCheck = async () => {
     if (!number || !pw) return; // 입력값이 없으면 아무 작업도 하지 않음
 
-    const hashedPw = await hashPassword(pw); // 비밀번호 해시 처리
     const docRef = doc(props.manage, "ini");
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       const data = docSnap.data();
       if (
-        (number === data.adminID && hashedPw === data.adminPW) ||
-        (number === data.rootID && hashedPw === data.rootPW)
+        (number === data.adminID && pw === data.adminPW) ||
+        (number === data.rootID && pw === data.rootPW)
       ) {
         setUser(number);
         setYear(data.year);
