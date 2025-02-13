@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } 
 import context from '../component/Context';
 import { useLocation, useHistory } from "react-router-dom";
 import { isMobile } from 'react-device-detect';
-import { query, where, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { query, where, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import moment from "moment";
 
 const App = (props) => {
@@ -16,6 +16,24 @@ const App = (props) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   // 각 테스트별 질문 답변 저장 (예: { [testId]: { [questionIndex]: answer } })
   const [answers, setAnswers] = useState({});
+  //const [storedAnswers, setStoredAnswers] = useState({});
+
+  // 컴포넌트 마운트 시 기존 사용자 answers 로드
+  useEffect(() => {
+    async function fetchUserStoredAnswers() {
+      const userId = localStorage.getItem('user');
+      if (!userId) return;
+      const userDocRef = doc(props.manage, "meta", "users", userId);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const data = userDocSnap.data();
+        if (data.answers) {
+          setAnswers(data.answers);
+        }
+      }
+    }
+    fetchUserStoredAnswers();
+  }, [props.manage]);
 
   // mental_health 테스트 데이터 fetch
   useEffect(() => {
@@ -56,17 +74,14 @@ const App = (props) => {
     Object.keys(answers[testsRecord.physical_health.id]).length === testsRecord.physical_health.questions.length;
   const allComplete = mentalComplete && physicalComplete;
 
-  // 다음 버튼 클릭 시 동작: 현재 질문이 마지막이면 테스트 전환 (두 테스트 모두 완료 시 변하지 않음)
+  // 수정된 handleNext: 마지막 문항에서는 자동으로 테스트 타입 전환하지 않음
   const handleNext = () => {
     if (currentQuestionIndex < currentTest.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // 마지막 질문에 답변한 상태면 상대 테스트로 전환
-      if (!allComplete) {
-        const nextType = selectedType === "mental_health" ? "physical_health" : "mental_health";
-        setSelectedType(nextType);
-        setCurrentQuestionIndex(0);
-      }
+      // 마지막 질문 도달: 자동 전환 제거 (원래 전환 로직 제거)
+      // 필요 시 알림을 추가할 수 있습니다.
+      alert("마지막 질문입니다.");
     }
   };
 
@@ -121,7 +136,7 @@ const App = (props) => {
             border: "none",
           }}
         >
-          정신건강
+          정신건강 {mentalComplete ? " (테스트 완료)" : ""}
         </button>
         <button
           onClick={() => {
@@ -135,7 +150,7 @@ const App = (props) => {
             border: "none",
           }}
         >
-          신체건강
+          신체건강 {physicalComplete ? " (테스트 완료)" : ""}
         </button>
       </div>
       
@@ -183,13 +198,22 @@ const App = (props) => {
             이전
           </button>
           <button
-            disabled={!currentAnswer}
+            // 수정: 마지막 질문일 경우 다음 버튼 비활성화
+            disabled={
+              currentQuestionIndex === currentTest.questions.length - 1 ||
+              !currentAnswer
+            }
             onClick={handleNext}
           >
             다음
           </button>
           <button
-            disabled={!allComplete}
+            disabled={
+              !(
+                (selectedType === "mental_health" && mentalComplete) ||
+                (selectedType === "physical_health" && physicalComplete)
+              )
+            }
             onClick={handleSubmit}
           >
             제출

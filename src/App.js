@@ -31,8 +31,6 @@ const manageRef = collection(db, "check");
 const App = (props) => {
   const state = useContext(context);
   const { user } = state;
-  console.log('///',user)
-
   return (
     <div className="App">
       {

@@ -44,14 +44,16 @@ const App = (props) => {
             </>
           }
         </div>
-        <div className='navRes'>
-          <NavLink className='navButton' exact to="/" title="진단결과"><i className="ri-survey-line"></i><span>진단결과</span></NavLink>
-          <NavLink className='navButton' exact to="/write" title="자료등록"><i className="ri-pencil-line"></i><span>자료등록</span></NavLink>
-        </div>
+        {user === 'admin' &&
+          <div className='navRes'>
+            <NavLink className='navButton' exact to="/" title="진단결과"><i className="ri-survey-line"></i><span>진단결과</span></NavLink>
+            <NavLink className='navButton' exact to="/write" title="자료등록"><i className="ri-pencil-line"></i><span>자료등록</span></NavLink>
+          </div>
+        }
         {
           !isMobile &&
           <div className='headRight'>
-            <span>{user && "안녕하세요 "+user+" 님"}</span>
+            <span>{user && "안녕하세요 " + user + " 님"}</span>
             <button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>
             <button className='logout' onClick={logOut} title="로그아웃"><i className="ri-logout-box-r-line"></i></button>
           </div>

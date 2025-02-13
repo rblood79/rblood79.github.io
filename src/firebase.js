@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-/*const firebaseConfig = {
+const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
     projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
@@ -11,10 +11,10 @@ import 'firebase/compat/firestore';
     measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
-export default firebase.initializeApp(firebaseConfig);*/
+export default firebase.initializeApp(firebaseConfig);
 
 
-const firebaseConfig = {
+/*const firebaseConfig = {
     apiKey: "AIzaSyD4lFYlGsKryHvQUF5CT3wUdhnU_uQBVUA",
     authDomain: "army-c3fb4.firebaseapp.com",
     projectId: "army-c3fb4",
@@ -24,4 +24,4 @@ const firebaseConfig = {
     measurementId: "G-SX7YFMRCJZ"
 }
 
-export default firebase.initializeApp(firebaseConfig);
+export default firebase.initializeApp(firebaseConfig);*/
