@@ -31,6 +31,7 @@ const manageRef = collection(db, "check");
 const App = (props) => {
   const state = useContext(context);
   const { user } = state;
+  console.log('///',user)
 
   return (
     <div className="App">
@@ -40,7 +41,7 @@ const App = (props) => {
           <>
             {props.location.pathname !== '/change' && <Head path={props.location.pathname} />}
             <main className='main'>
-              <Route exact path="/" render={() => <List manage={manageRef} />} />
+              <Route exact path="/" render={() => user === 'admin' ?<View manage={manageRef} /> : <List manage={manageRef} />} />
               <Route path="/write" render={() => <Write manage={manageRef} />} />
               <Route path="/view" render={() => <View manage={manageRef} />} />
               <Route path="/change" render={() => <Change manage={manageRef} />} />

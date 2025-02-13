@@ -78,9 +78,25 @@ const App = (props) => {
       return;
     }
     try {
-      const userDocRef = doc(props.manage, "users", userId);
+      
+      const userDocRef = doc(props.manage, "meta", "users", userId);
+      const transformedAnswers = {};
+      Object.keys(answers).forEach(testId => {
+        const testAnswers = answers[testId];
+        const testType = testsRecord.mental_health.id === testId ? "mental_health" : "physical_health";
+        transformedAnswers[testId] = {};
+        Object.keys(testAnswers).forEach(questionIndex => {
+          const answer = testAnswers[questionIndex];
+          if (testType === "mental_health") {
+            transformedAnswers[testId][questionIndex] = answer === "없음" ? 0 : answer === "2일 이상" ? 1 : answer === "1주일 이상" ? 2 : 3;
+          } else if (testType === "physical_health") {
+            transformedAnswers[testId][questionIndex] = answer === "매우 맞음" ? 1 : answer === "맞음" ? 2 : answer === "보통" ? 3 : answer === "아님" ? 4 : 5;
+          }
+        });
+      });
       await updateDoc(userDocRef, {
-        answers: { ...answers } // List.js에서 선택한 질문의 답들을 저장
+        // List.js에서 선택한 질문의 답들을 저장
+        answers: transformedAnswers
       });
       alert('답변이 제출되었습니다.');
     } catch (error) {

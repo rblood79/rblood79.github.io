@@ -12,9 +12,9 @@ const Write = (props) => {
 	// 새로 추가: 저장된 질문 목록
 	const [savedQuestions, setSavedQuestions] = useState([]);
 	
-	// 새로 추가: 사용자 등록 상태
+	// 수정: 사용자 등록 상태의 키를 "number"로 변경
 	const [userInputs, setUserInputs] = useState({
-		militaryNumber: '',
+		number: '',
 		password: '',
 		name: '',
 		rank: '',
@@ -88,30 +88,41 @@ const Write = (props) => {
 		}
 	}, [testId, testName, testType, question, options, props.manage]);
 	
-	// 새로 추가: 사용자 등록 핸들러 수정 (doc 경로에 군번 추가)
+	// 수정: registerUser 함수 변경 (문제 등록 방식과 유사하게 동작)
 	const registerUser = useCallback(async () => {
-		const { militaryNumber, password, name, rank, team } = userInputs;
-		if (!militaryNumber || !password || !name || !rank || !team) {
+		const { number, password, name, rank, team } = userInputs;
+		if (!number || !password || !name || !rank || !team) {
 			alert('모든 필드를 입력해주세요.');
 			return;
 		}
+		// 수정: "check" 컬렉션 아래 바로 "users" 하위 컬렉션에 사용자 문서를 생성
+		const userRef = doc(props.manage, "meta" ,"users", number);
+		const userSnap = await getDoc(userRef);
 		try {
-			// "users" 컬렉션 아래에 군번을 문서 ID로 사용
-			await setDoc(doc(props.manage, "users", militaryNumber), {
-				militaryNumber,
-				password,
-				name,
-				rank,
-				team,
-				answers: {}
-			});
+			if (userSnap.exists()) {
+				await updateDoc(userRef, {
+					password,
+					name,
+					rank,
+					team
+				});
+			} else {
+				await setDoc(userRef, {
+					number,
+					password,
+					name,
+					rank,
+					team,
+					answers: {}
+				});
+			}
 			alert('사용자 등록 성공');
-			setUserInputs({ militaryNumber: '', password: '', name: '', rank: '', team: '' });
+			setUserInputs({ number: '', password: '', name: '', rank: '', team: '' });
 		} catch (error) {
 			console.error('사용자 등록 오류', error);
 			alert('사용자 등록에 실패하였습니다.');
 		}
-	}, [userInputs, props.manage]);
+	}, [userInputs]);
 
 	return (
 		<div style={{ padding: '20px' }}>
@@ -161,16 +172,16 @@ const Write = (props) => {
 				</div>
 				)}
 				
-				{/* 새로 추가: 사용자 등록 폼 */}
+				{/* 수정: 사용자 등록 폼에서 "militaryNumber" 대신 "number" 사용 */}
 				<div style={{ padding: '20px', marginTop: '40px', borderTop: '1px solid #ccc' }}>
 					<h2>사용자 등록</h2>
 					<div>
-						<label>군번:</label>
+						<label>아이디:</label>
 						<input
 							type="text"
-							value={userInputs.militaryNumber}
-							onChange={onChangeUserField('militaryNumber')}
-							placeholder="군번을 입력하세요"
+							value={userInputs.number}
+							onChange={onChangeUserField('number')}
+							placeholder="아이디을 입력하세요"
 						/>
 					</div>
 					<div>
@@ -183,7 +194,7 @@ const Write = (props) => {
 						/>
 					</div>
 					<div>
-						<label>이름:</label>
+						<label>작업자:</label>
 						<input
 							type="text"
 							value={userInputs.name}
@@ -201,12 +212,12 @@ const Write = (props) => {
 						/>
 					</div>
 					<div>
-						<label>팀:</label>
+						<label>공장명:</label>
 						<input
 							type="text"
 							value={userInputs.team}
 							onChange={onChangeUserField('team')}
-							placeholder="팀을 입력하세요"
+							placeholder="공장명을 입력하세요"
 						/>
 					</div>
 					<button onClick={registerUser} style={{ marginTop: '10px' }}>사용자 등록</button>

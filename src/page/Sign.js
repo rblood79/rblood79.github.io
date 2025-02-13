@@ -43,47 +43,26 @@ const App = (props) => {
     const iniDocSnap = await getDoc(iniDocRef);
 
     if (iniDocSnap.exists()) {
-      const data = iniDocSnap.data();
-
-      if (
-        (number === data.adminID && pw === data.adminPW) ||
-        (number === data.rootID && pw === data.rootPW)
-      ) {
-        const yearData = data.year ? data.year : {};
-        setUser(number);
-        setYear(yearData);
-        localStorage.setItem('user', number);
-        localStorage.setItem("year", JSON.stringify(yearData));
-
-        if (number === data.adminID) {
-          await setDoc(iniDocRef, {
-            log: {
-              ['GT_' + new Date().getTime()]: serverTimestamp()
-            }
-          }, { merge: true });
-        }
-        history.push('/');
-      } else {
-        // 일반 사용자 로그인 처리
-        const userDocRef = doc(props.manage, "users");
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-          if (userData.password === pw) {
-            // 일반 사용자 로그인 성공 처리
-            setUser(number);
-            setYear(userData.year ? userData.year : {});
-            localStorage.setItem('user', number);
-            localStorage.setItem("year", JSON.stringify(userData.year ? userData.year : {}));
-            history.push('/');
-          } else {
-            alert('비밀번호가 일치하지 않습니다.');
-            setInputs({ number: '', pw: '' });
-          }
+      // 기존의 관리자 조건 분기 제거 후 일반 사용자 로그인 로직만 사용
+      localStorage.setItem('user', number);
+      const userDocRef = doc(props.manage, "meta", "users", number);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        //console.log('///',userData)
+        if (userData.password === pw) {
+          setUser(number);
+          setYear(userData.year ? userData.year : {});
+          localStorage.setItem('user', number);
+          localStorage.setItem("year", JSON.stringify(userData.year ? userData.year : {}));
+          history.push('/');
         } else {
-          alert('사용자가 존재하지 않습니다.');
+          alert('비밀번호가 일치하지 않습니다.');
           setInputs({ number: '', pw: '' });
         }
+      } else {
+        alert('사용자가 존재하지 않습니다.');
+        setInputs({ number: '', pw: '' });
       }
     } else {
       console.log("No such document!");

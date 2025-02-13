@@ -45,7 +45,7 @@ const App = (props) => {
           }
         </div>
         <div className='navRes'>
-          <NavLink className='navButton' exact to="/" title="관리목록"><i className="ri-survey-line"></i><span>관리목록</span></NavLink>
+          <NavLink className='navButton' exact to="/" title="진단결과"><i className="ri-survey-line"></i><span>진단결과</span></NavLink>
           <NavLink className='navButton' exact to="/write" title="자료등록"><i className="ri-pencil-line"></i><span>자료등록</span></NavLink>
         </div>
         {
