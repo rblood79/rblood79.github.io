@@ -146,7 +146,8 @@ const App = (props) => {
           }}
         >
           <i className="ri-brain-line"></i>
-          <span>정신건강</span>{mentalComplete ? " (테스트 완료)" : "(테스트 미완료)"}
+          <h3>정신건강</h3>
+          <span>{mentalComplete ? " (테스트 완료)" : "(테스트 미완료)"}</span>
         </button>
         <button
           disabled={physicalComplete}
@@ -161,7 +162,7 @@ const App = (props) => {
           }}
         >
           <i className="ri-body-scan-line"></i>
-          <span>신체건강</span>{physicalComplete ? " (테스트 완료)" : "(테스트 미완료)"}
+          <h3>신체건강</h3><span>{physicalComplete ? " (테스트 완료)" : "(테스트 미완료)"}</span>
         </button>
       </div>
 
@@ -201,8 +202,10 @@ const App = (props) => {
           </div>
         </div>
         {/* 이전과 다음(또는 제출) 버튼을 함께 표시 */}
-        <div>
+        <div className='controll'>
+        <div className='buttonContainer'>
           <button
+            className={'button back'}
             disabled={currentQuestionIndex === 0}
             onClick={() => {
               if (currentQuestionIndex > 0) {
@@ -214,6 +217,7 @@ const App = (props) => {
           </button>
           <button
             // 수정: 마지막 질문일 경우 다음 버튼 비활성화
+            className={'button'}
             disabled={
               currentQuestionIndex === currentTest.questions.length - 1 ||
               !currentAnswer
@@ -223,6 +227,7 @@ const App = (props) => {
             다음
           </button>
           <button
+            className={'button'}
             disabled={
               !(
                 (selectedType === "mental_health" && mentalComplete) ||
@@ -233,6 +238,7 @@ const App = (props) => {
           >
             제출
           </button>
+        </div>
         </div>
       </div>
     </div>

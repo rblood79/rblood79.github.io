@@ -35,7 +35,7 @@ const App = (props) => {
     <header className="head">
       <nav className='nav sub'>
         <div className='headGroup'>
-          <div className='headTitle'><img src={logo} alt='MND' /><span>피로도관리체크</span></div>
+          <div className='headTitle'><img src={logo} alt='MND' /><span>{user === 'admin' ? '테스트 분석표' : '피로도관리체크'}</span></div>
           {
             isMobile &&
             <>
@@ -44,7 +44,7 @@ const App = (props) => {
             </>
           }
         </div>
-        {user === 'admin' &&
+        {user === 'rblood' &&
           <div className='navRes'>
             <NavLink className='navButton' exact to="/" title="진단결과"><i className="ri-survey-line"></i><span>진단결과</span></NavLink>
             <NavLink className='navButton' exact to="/write" title="자료등록"><i className="ri-pencil-line"></i><span>자료등록</span></NavLink>
