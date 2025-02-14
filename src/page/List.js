@@ -1,9 +1,6 @@
 import _ from 'lodash';
 import 'remixicon/fonts/remixicon.css';
-import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
-import context from '../component/Context';
-import { useLocation, useHistory } from "react-router-dom";
-import { isMobile } from 'react-device-detect';
+import React, { useState, useEffect } from 'react';
 import { query, where, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import moment from "moment";
 
@@ -146,7 +143,7 @@ const App = (props) => {
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: mentalComplete ? "#999" : (selectedType === "mental_health" && "#007bff"),
+            backgroundColor: mentalComplete ? "#cbcbcb" : (selectedType === "mental_health" && "#007bff"),
             color: mentalComplete ? "#fff" : (selectedType === "mental_health" ? "#fff" : "#000"),
 
           }}
@@ -163,19 +160,19 @@ const App = (props) => {
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: physicalComplete ? "#999" : (selectedType === "physical_health" && "#007bff"),
+            backgroundColor: physicalComplete ? "#cbcbcb" : (selectedType === "physical_health" && "#007bff"),
             color: physicalComplete ? "#fff" : (selectedType === "physical_health" ? "#fff" : "#000"),
           }}
         >
           <i className="ri-body-scan-line"></i>
-          <h3>신체건강</h3>
+          <h3 className='teamStatsText'>신체건강</h3>
           {/* <span>{physicalComplete ? " (완료)" : "(미완료)"}</span> */}
         </button>
       </div>
 
       {/* 현재 테스트의 질문을 한 번에 하나씩 표시 */}
       <div className='questionContainer'>
-        <h3 className='teamStatsText'>{currentTest.test_name} 테스트</h3>
+        <h3 className='teamStatsTitle'>{currentTest.test_name} 테스트</h3>
         <div className='questionGroup'>
           <p className='questionText'>
             <strong>{`Q${currentQuestionIndex + 1}.`}</strong> {currentTest.questions[currentQuestionIndex].question}
@@ -200,8 +197,9 @@ const App = (props) => {
                   }
                 />
                 <label htmlFor={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}>
-                  <span className='optionText'>{option}</span>
+                  
                   <span className='optionIndex'>{optionIndex}</span>
+                  <span className='optionText'>{option}</span>
                 </label>
 
               </div>
@@ -228,6 +226,7 @@ const App = (props) => {
           */}
           <button
             // 수정된 disabled 조건: 현재 질문에 답변이 없거나 모든 테스트가 완료되었으면 비활성화
+            style={{ flex: !allComplete && 4 }}
             className={'button'}
             disabled={!currentAnswer || allComplete}
             onClick={handleNext}
@@ -235,6 +234,7 @@ const App = (props) => {
             다음
           </button>
           <button
+            style={{ flex: allComplete && 4 }}
             className={'button'}
             // 모든 테스트가 완료된 경우에만 활성화
             disabled={!allComplete}

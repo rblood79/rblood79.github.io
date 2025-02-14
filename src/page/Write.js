@@ -1,13 +1,9 @@
-import React, { useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { isMobile } from 'react-device-detect';
-import { useHistory, useLocation } from "react-router-dom";
+import React, { useContext, useState, useCallback } from 'react';
 import context from '../component/Context';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, collection, getFirestore } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 const Write = (props) => {
 	const state = useContext(context);
-	const location = useLocation();
-	const history = useHistory();
 	const { user } = state;
 	// 테스트 데이터 상태
 	const [testId, setTestId] = useState('');

@@ -1,15 +1,10 @@
-import React, { useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { isMobile } from 'react-device-detect';
-import { useHistory, useLocation } from "react-router-dom";
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
 import context from '../component/Context';
-import logo from '../assets/logo.svg';
 import moment from "moment";
 
 const App = (props) => {
   const state = useContext(context);
-  const location = useLocation();
-  const history = useHistory();
   const { user } = state;
 
   // 선택한 질문 ID와 사용자 답변 리스트 상태
@@ -76,6 +71,7 @@ const App = (props) => {
   // 팀별 통계 데이터 계산 (teamStats) - fullAnswers 기준
   const teamStats = useMemo(() => {
     const stats = {};
+    console.log(userAnswers)
     userAnswers.forEach(u => {
       const team = u.team || "미지정";
       if (!stats[team]) {
@@ -97,7 +93,6 @@ const App = (props) => {
     return stats;
   }, [userAnswers]);
 
-  const tableRef = useRef();
 
   // 새로 추가: mentalData 및 physicalData 계산
   const mentalData = selectedTeam ? (() => {
@@ -130,24 +125,6 @@ const App = (props) => {
     };
   })() : { count: 0, details: '' };
 
-  const onPrint = useCallback(() => {
-    const style = document.createElement('style');
-    style.media = 'print';
-    style.innerHTML = `
-      body {
-        background: #fff;
-        padding: 0mm;
-        height: 100% !important;
-      }
-      table {
-        height: calc(297mm - 20mm) !important;
-      }
-      @page {}
-    `;
-    document.head.appendChild(style);
-    window.print();
-    document.head.removeChild(style);
-  }, []);
 
   return (
     <div className='view'>
@@ -165,11 +142,14 @@ const App = (props) => {
               onChange={(e) => setSelectDay(e.target.value)}
             />
           </div>
+          <button className='excel'>
+            <i className="ri-file-excel-2-line"></i>
+          </button>
         </div>
 
         <div className='tableContents'>
 
-          <section id='section1' className='teamStatsSection' style={{ gap: selectedTeam && '8px' }}>
+          <section id='section1' className='teamStatsSection' style={{ gap: selectedTeam && '8px', marginTop: userAnswers.length>0 && '16px'}}>
             {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
             {Object.entries(teamStats).map(([team, counts]) => {
               let iconClass = '';
@@ -235,7 +215,7 @@ const App = (props) => {
           <section id='section2'>
             {selectedTeam && (
               <div>
-                <h3 className='teamStatsText'>{selectedTeam}의 테스트 분석표</h3>
+                <h3 className='teamStatsTitle'>{selectedTeam}의 테스트 분석표</h3>
                 <table className='noUserTable'>
                   <colgroup>
                     <col style={{ width: '150px' }} />
@@ -288,8 +268,8 @@ const App = (props) => {
             ) }
           </section>
 
-          <section id='section3'>
-            <h3>{selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)</h3>
+          <section id='section3' >
+            <h3 className='teamStatsTitle'>{selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)</h3>
             {(selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser).length > 0 ? (
               <table className='noUserTable'>
                 <thead>
@@ -312,7 +292,7 @@ const App = (props) => {
                 </tbody>
               </table>
             ) : (
-              <p>모든 사용자가 답변을 하였습니다.</p>
+              <p className='answerCrear'>모든 사용자가 답변을 하였습니다.</p>
             )}
           </section>
 

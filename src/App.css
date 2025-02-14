@@ -388,7 +388,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  gap: 48px;
+  gap: 16px;
 }
 
 .formBody,
@@ -487,6 +487,8 @@
   z-index: 1;
 
   width: 100%;
+
+  gap: 16px;
 }
 
 .formBody+.controll,
@@ -1175,10 +1177,6 @@ table thead th i {
   cursor: pointer;
 }
 
-section+section {
-  margin-top: 24px;
-}
-
 .typeGroup {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1192,7 +1190,7 @@ section+section {
 .typeGroup button {
   background-color: #fff;
   color: #343434;
-  border: 1px solid rgba(0,0,0,0.24);
+  border: 1px solid rgba(0, 0, 0, 0.24);
 
   display: flex;
   flex: 1;
@@ -1216,9 +1214,9 @@ section+section {
 
 .questionGroup {
   padding: 18px;
-  border-radius: 16px;
+  border-radius: 0px 0px 16px 16px;
   background-color: #f5f5f5;
-  border: 1px solid rgba(0,0,0,0.24);
+  border: 1px solid rgba(0, 0, 0, 0.24);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -1276,7 +1274,8 @@ section+section {
 
 .optionItem .optionText {
   font-size: 14px;
-  margin-bottom: 8px;
+  font-weight: 600;
+  margin-top: 8px;
 }
 
 .optionItem .optionIndex {
@@ -1287,7 +1286,7 @@ section+section {
   height: 56px;
   background-color: #c9c9c9;
   color: rgba(0, 0, 0, 0.56);
-  border: 1px solid rgba(0,0,0,0.24);
+  border: 1px solid rgba(0, 0, 0, 0.24);
   border-radius: 56px;
 
   font-size: 16px;
@@ -1325,6 +1324,22 @@ section+section {
 .teamStatsText {
   margin: 8px;
   font-size: 21px;
+}
+
+.teamStatsTitle {
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  margin: 0;
+  padding: 16px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  background: #8a8a8a;
+  margin-top: 16px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.questionContainer .teamStatsTitle {
+  margin-top: 0px;
 }
 
 .teamStatsMen,
@@ -1365,16 +1380,40 @@ section {
 
 .day-selector {
   width: 100%;
-  margin-bottom: 16px;
 }
 
 .dayInput {
-  border: 1px solid rgba(0,0,0,0.24);
+  border: 1px solid rgba(0, 0, 0, 0.24);
   height: 48px;
   width: 100%;
   border-radius: 16px;
   padding: 0 16px;
   font-size: 16px;
+}
+
+.answerCrear {
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  padding: 0;
+  margin: 0;
+  padding: 16px;
+  background: #fff;
+}
+
+.excel {
+  background: #107c41;
+  color: #fff;
+  border: 1px solid #107c41;
+  /* padding: 8px 16px; */
+  border-radius: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  aspect-ratio: 1;
+
+  width: 48px;
+  height: 48px;
 }
 
 @media (max-width: 459.9px) {
