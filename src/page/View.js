@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import context from '../component/Context';
 import moment from "moment";
+import * as XLSX from 'xlsx';
 
 const App = (props) => {
   const state = useContext(context);
@@ -11,15 +12,88 @@ const App = (props) => {
   const [selectedQuestionId] = useState("0"); // 예시: "0"번 질문
   // 추가: 전체 원본 answers 데이터를 포함하여 저장 (selectedAnswers와 fullAnswers)
   const [userAnswers, setUserAnswers] = useState([]);
-
   const [noUser, setNoUser] = useState([]);
   // 추가: 선택된 팀 상태
   const [selectedTeam, setSelectedTeam] = useState(null);
   // 새로 추가: 날짜 상태 (기본값 "오늘날짜")
-
   const today = moment().format("YYYY-MM-DD");
-
   const [selectDay, setSelectDay] = useState(today);
+
+  // excel 버튼 클릭 시 호출: 선택된 날짜의 모든 사용자 정보를 조회하여 
+  // answers 의 "test_1" 및 "test_2" 합계를 구하여 데이터에 추가하고 console 에 보여줌
+  const handleExcelClick = async () => {
+    try {
+      const usersRef = collection(props.manage, "meta", "users");
+      const querySnapshot = await getDocs(usersRef);
+      const results = [];
+      let counter = 1; // 순번 시작값
+  
+      querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        // "admin" 팀인 경우 제외
+        if (data.team && data.team.toLowerCase() === "admin") return;
+        // answers 객체는 결과에 포함하지 않음
+        const { answers, ...rest } = data;
+  
+        let totalTest1 = null;
+        let totalTest2 = null;
+        if (answers && answers[selectDay]) {
+          const dayAnswers = answers[selectDay];
+          totalTest1 = dayAnswers.test_1
+            ? Object.values(dayAnswers.test_1).reduce((acc, cur) => acc + Number(cur), 0)
+            : 0;
+          totalTest2 = dayAnswers.test_2
+            ? Object.values(dayAnswers.test_2).reduce((acc, cur) => acc + Number(cur), 0)
+            : 0;
+        }
+  
+        // password 컬럼 제거 및 키명 변경 처리
+        const newData = { ...rest, totalTest1, totalTest2, id: docSnap.id };
+        delete newData.password;
+        
+        newData["아이디"] = newData.id;
+        delete newData.id;
+        
+        // "작업자" -> "작성자" 로 변경
+        newData["작성자"] = newData.name;
+        delete newData.name;
+        
+        newData["계급"] = newData.rank;
+        delete newData.rank;
+        
+        newData["공장명"] = newData.team;
+        delete newData.team;
+        
+        newData["정신건강"] = newData.totalTest1;
+        delete newData.totalTest1;
+        
+        newData["신체건강"] = newData.totalTest2;
+        delete newData.totalTest2;
+        
+        // 원하는 순서대로 키를 재조합
+        const orderedData = {
+          "순번": counter++,
+          "아이디": newData["아이디"],
+          "공장명": newData["공장명"],
+          "계급": newData["계급"],
+          "작성자": newData["작성자"],
+          "정신건강": newData["정신건강"],
+          "신체건강": newData["신체건강"]
+        };
+  
+        results.push(orderedData);
+      });
+      console.log("Excel Data:", results);
+      
+      // XLSX 라이브러리를 이용하여 results 데이터를 .xlsx 파일로 다운로드
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(results);
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
+      XLSX.writeFile(workbook, `ExcelData_${selectDay}.xlsx`);
+    } catch (error) {
+      console.error("Excel fetch error", error);
+    }
+  };
 
   // "meta/users" 컬렉션에서 선택한 질문에 답한 사용자들 fetch 및 fullAnswers 저장
   useEffect(() => {
@@ -71,7 +145,7 @@ const App = (props) => {
   // 팀별 통계 데이터 계산 (teamStats) - fullAnswers 기준
   const teamStats = useMemo(() => {
     const stats = {};
-    console.log(userAnswers)
+    //console.log(userAnswers)
     userAnswers.forEach(u => {
       const team = u.team || "미지정";
       if (!stats[team]) {
@@ -142,7 +216,7 @@ const App = (props) => {
               onChange={(e) => setSelectDay(e.target.value)}
             />
           </div>
-          <button className='excel'>
+          <button className='excel' onClick={handleExcelClick}>
             <i className="ri-file-excel-2-line"></i>
           </button>
         </div>
