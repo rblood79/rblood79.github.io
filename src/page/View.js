@@ -233,9 +233,9 @@ const App = (props) => {
           </section>
 
           <section id='section2'>
-            {selectedTeam ? (
+            {selectedTeam && (
               <div>
-                <h3 className='teamStatsText'>{selectedTeam}의 테스트 분석표 입니다.</h3>
+                <h3 className='teamStatsText'>{selectedTeam}의 테스트 분석표</h3>
                 <table className='noUserTable'>
                   <colgroup>
                     <col style={{ width: '150px' }} />
@@ -285,9 +285,7 @@ const App = (props) => {
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <p>팀을 선택해주세요.</p>
-            )}
+            ) }
           </section>
 
           <section id='section3'>

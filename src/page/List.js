@@ -146,8 +146,8 @@ const App = (props) => {
           }}
         >
           <i className="ri-brain-line"></i>
-          <h3>정신건강</h3>
-          <span>{mentalComplete ? " (테스트 완료)" : "(테스트 미완료)"}</span>
+          <h3 className='teamStatsText'>정신건강</h3>
+          <span>{mentalComplete ? " (완료)" : "(미완료)"}</span>
         </button>
         <button
           disabled={physicalComplete}
@@ -162,13 +162,13 @@ const App = (props) => {
           }}
         >
           <i className="ri-body-scan-line"></i>
-          <h3>신체건강</h3><span>{physicalComplete ? " (테스트 완료)" : "(테스트 미완료)"}</span>
+          <h3>신체건강</h3><span>{physicalComplete ? " (완료)" : "(미완료)"}</span>
         </button>
       </div>
 
       {/* 현재 테스트의 질문을 한 번에 하나씩 표시 */}
       <div className='questionContainer'>
-        <h3 className='questionType'>{currentTest.test_name} 테스트</h3>
+        <h3 className='teamStatsText'>{currentTest.test_name} 테스트</h3>
         <div className='questionGroup'>
           <p className='questionText'>
             <strong>{`Q${currentQuestionIndex + 1}.`}</strong> {currentTest.questions[currentQuestionIndex].question}
@@ -201,11 +201,13 @@ const App = (props) => {
             ))}
           </div>
         </div>
-        {/* 이전과 다음(또는 제출) 버튼을 함께 표시 */}
-        <div className='controll'>
+
+      </div>
+      {/* 이전과 다음(또는 제출) 버튼을 함께 표시 */}
+      <div className='controll'>
         <div className='buttonContainer'>
           <button
-            className={'button back'}
+            className={'button'}
             disabled={currentQuestionIndex === 0}
             onClick={() => {
               if (currentQuestionIndex > 0) {
@@ -238,7 +240,6 @@ const App = (props) => {
           >
             제출
           </button>
-        </div>
         </div>
       </div>
     </div>

@@ -53,12 +53,12 @@ button, a {
 
 .button, .buttonLeft, .buttonRight {
   outline: 0;
-  border: 1px solid rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(0, 0, 0, 0.24);
   background-color: #0067B8;
   color: #fff;
   padding: 0;
-  border-radius: .125rem;
-  font-size: 14px;
+  border-radius: 16px;
+  font-size: 16px;
   font-weight: 500;
   display: flex;
   flex: 1;
