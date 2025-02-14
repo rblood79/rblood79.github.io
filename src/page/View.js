@@ -223,7 +223,7 @@ const App = (props) => {
                     
                   }}
                   onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}>
-                  <i className={iconClass} style={{ display: selectedTeam && 'none', color: '#ccc'}}></i>
+                  <i className={iconClass} style={{ display: selectedTeam && 'none'}}></i>
                   <h3 className='teamStatsText' style={{ fontSize: selectedTeam && '14px', margin: selectedTeam && 0, color: selectedTeam === team ? '#fff' : backgroundColor}}>{team}</h3>
                   <p className='teamStatsMen' style={{ display: selectedTeam && 'none'}} >정신건강 ({counts.test_1}명)</p>
                   <p className='teamStatsPhy' style={{ display: selectedTeam && 'none'}} >신체건강 ({counts.test_2}명)</p>

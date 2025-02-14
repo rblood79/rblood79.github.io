@@ -1192,7 +1192,7 @@ section+section {
 .typeGroup button {
   background-color: #fff;
   color: #343434;
-  border: 1px solid #d3d3d3;
+  border: 1px solid rgba(0,0,0,0.24);
 
   display: flex;
   flex: 1;
@@ -1206,6 +1206,7 @@ section+section {
 
 .typeGroup button i {
   font-size: 36px;
+  color: rgba(0, 0, 0, 0.64);
 }
 
 .typeGroup button h3 {
@@ -1234,18 +1235,19 @@ section+section {
   font-size: 24px;
   font-weight: 600;
   color: #343434;
-
+  margin: 0;
   display: flex;
   justify-content: left;
   align-items: flex-start;
   flex-direction: column;
   text-align: left;
-  min-height: 96px;
+  padding-bottom: 24px;
 }
 
 .questionText strong {
   font-weight: 900;
   color: #343434;
+  height: 42px;
 }
 
 .optionsContainer {
@@ -1274,7 +1276,7 @@ section+section {
 
 .optionItem .optionText {
   font-size: 14px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .optionItem .optionIndex {
@@ -1284,6 +1286,7 @@ section+section {
   width: 56px;
   height: 56px;
   background-color: #c9c9c9;
+  color: rgba(0, 0, 0, 0.56);
   border: 1px solid rgba(0,0,0,0.24);
   border-radius: 56px;
 
@@ -1316,7 +1319,7 @@ section+section {
 
 .teamStatsSection .teamStats i {
   font-size: 36px;
-  color: #c9c9c9;
+  color: #666;
 }
 
 .teamStatsText {
@@ -1347,6 +1350,7 @@ section+section {
 .noUserTable td {
   padding: 16px 8px;
   border: 1px solid #d3d3d3;
+  background-color: #fff;
   height: 48px;
 }
 
@@ -1365,7 +1369,7 @@ section {
 }
 
 .dayInput {
-  border: 1px solid #d3d3d3;
+  border: 1px solid rgba(0,0,0,0.24);
   height: 48px;
   width: 100%;
   border-radius: 16px;

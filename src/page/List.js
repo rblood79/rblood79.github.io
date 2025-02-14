@@ -19,7 +19,7 @@ const App = (props) => {
   //const [storedAnswers, setStoredAnswers] = useState({});
 
   // 컴포넌트 마운트 시 기존 사용자 answers 로드
-  useEffect(() => {
+  /*useEffect(() => {
     async function fetchUserStoredAnswers() {
       const userId = localStorage.getItem('user');
       if (!userId) return;
@@ -33,7 +33,7 @@ const App = (props) => {
       }
     }
     fetchUserStoredAnswers();
-  }, [props.manage]);
+  }, [props.manage]);*/
 
   // mental_health 테스트 데이터 fetch
   useEffect(() => {
@@ -74,14 +74,20 @@ const App = (props) => {
     Object.keys(answers[testsRecord.physical_health.id]).length === testsRecord.physical_health.questions.length;
   const allComplete = mentalComplete && physicalComplete;
 
-  // 수정된 handleNext: 마지막 문항에서는 자동으로 테스트 타입 전환하지 않음
+  // 수정된 handleNext 함수
   const handleNext = () => {
     if (currentQuestionIndex < currentTest.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // 마지막 질문 도달: 자동 전환 제거 (원래 전환 로직 제거)
-      // 필요 시 알림을 추가할 수 있습니다.
-      alert("마지막 질문입니다.");
+      // 현재 선택한 타입의 마지막 질문인 경우 다른 테스트가 완료되지 않았다면 전환
+      const otherType = selectedType === "mental_health" ? "physical_health" : "mental_health";
+      const otherTestComplete = otherType === "mental_health" ? mentalComplete : physicalComplete;
+      if (!otherTestComplete) {
+        setSelectedType(otherType);
+        setCurrentQuestionIndex(0);
+      } else {
+        alert("마지막 질문입니다.");
+      }
     }
   };
 
@@ -140,14 +146,14 @@ const App = (props) => {
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: mentalComplete ? "#999" : (selectedType === "mental_health" ? "#007bff" : "#eee"),
+            backgroundColor: mentalComplete ? "#999" : (selectedType === "mental_health" && "#007bff"),
             color: mentalComplete ? "#fff" : (selectedType === "mental_health" ? "#fff" : "#000"),
 
           }}
         >
           <i className="ri-brain-line"></i>
           <h3 className='teamStatsText'>정신건강</h3>
-          <span>{mentalComplete ? " (완료)" : "(미완료)"}</span>
+          {/* <span>{mentalComplete ? " (완료)" : "(미완료)"}</span> */}
         </button>
         <button
           disabled={physicalComplete}
@@ -157,12 +163,13 @@ const App = (props) => {
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: physicalComplete ? "#999" : (selectedType === "physical_health" ? "#007bff" : "#eee"),
+            backgroundColor: physicalComplete ? "#999" : (selectedType === "physical_health" && "#007bff"),
             color: physicalComplete ? "#fff" : (selectedType === "physical_health" ? "#fff" : "#000"),
           }}
         >
           <i className="ri-body-scan-line"></i>
-          <h3>신체건강</h3><span>{physicalComplete ? " (완료)" : "(미완료)"}</span>
+          <h3>신체건강</h3>
+          {/* <span>{physicalComplete ? " (완료)" : "(미완료)"}</span> */}
         </button>
       </div>
 
@@ -206,6 +213,7 @@ const App = (props) => {
       {/* 이전과 다음(또는 제출) 버튼을 함께 표시 */}
       <div className='controll'>
         <div className='buttonContainer'>
+          {/* 
           <button
             className={'button'}
             disabled={currentQuestionIndex === 0}
@@ -217,25 +225,19 @@ const App = (props) => {
           >
             이전
           </button>
+          */}
           <button
-            // 수정: 마지막 질문일 경우 다음 버튼 비활성화
+            // 수정된 disabled 조건: 현재 질문에 답변이 없거나 모든 테스트가 완료되었으면 비활성화
             className={'button'}
-            disabled={
-              currentQuestionIndex === currentTest.questions.length - 1 ||
-              !currentAnswer
-            }
+            disabled={!currentAnswer || allComplete}
             onClick={handleNext}
           >
             다음
           </button>
           <button
             className={'button'}
-            disabled={
-              !(
-                (selectedType === "mental_health" && mentalComplete) ||
-                (selectedType === "physical_health" && physicalComplete)
-              )
-            }
+            // 모든 테스트가 완료된 경우에만 활성화
+            disabled={!allComplete}
             onClick={handleSubmit}
           >
             제출
