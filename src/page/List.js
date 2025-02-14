@@ -93,8 +93,14 @@ const App = (props) => {
       return;
     }
     try {
-
       const userDocRef = doc(props.manage, "meta", "users", userId);
+      // 오늘 날짜를 key로 생성
+      const today = moment().format("YYYY-MM-DD");
+
+      // 기존 답변 가져오기
+      const userDocSnap = await getDoc(userDocRef);
+      const prevAnswers = userDocSnap.exists() && userDocSnap.data().answers ? userDocSnap.data().answers : {};
+
       const transformedAnswers = {};
       Object.keys(answers).forEach(testId => {
         const testAnswers = answers[testId];
@@ -109,10 +115,12 @@ const App = (props) => {
           }
         });
       });
-      await updateDoc(userDocRef, {
-        // List.js에서 선택한 질문의 답들을 저장
-        answers: transformedAnswers
-      });
+      // 오늘 날짜 key에 새 답변 저장 및 기존 데이터 병합
+      const newAnswers = {
+        ...prevAnswers,
+        [today]: transformedAnswers
+      };
+      await updateDoc(userDocRef, { answers: newAnswers });
       alert('답변이 제출되었습니다.');
     } catch (error) {
       console.error('제출 실패', error);

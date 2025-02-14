@@ -1273,8 +1273,8 @@ section+section {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   background-color: #c9c9c9;
   border: 1px solid #d3d3d3;
   border-radius: 6px;
