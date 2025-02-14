@@ -1178,6 +1178,112 @@ section+section {
   margin-top: 24px;
 }
 
+.typeGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  flex: 0;
+}
+
+.typeGroup button {
+  background-color: #fff;
+  color: #343434;
+  border: 1px solid #d3d3d3;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 16px;
+  aspect-ratio: 1;
+}
+
+.typeGroup button i {
+  font-size: 48px;
+}
+
+.questionGroup {
+  padding: 18px;
+  border-radius: 16px;
+  background-color: #f5f5f5;
+  border: 2px solid #e8eaee;
+  display: flex;
+  flex-direction: column;
+}
+
+.questionContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.questionText {
+  font-size: 24px;
+  font-weight: 600;
+  color: #343434;
+
+  display: flex;
+  justify-content: left;
+  align-items: flex-start;
+  flex-direction: column;
+  text-align: left;
+  min-height: 96px;
+}
+
+.questionText strong {
+  font-weight: 900;
+  color: #343434;
+}
+
+.optionsContainer {
+  display: flex;
+  flex-direction: row;
+  
+  justify-content: space-between;
+}
+
+.optionItem {
+  border: 0px solid #d3d3d3;
+  display: flex;
+}
+
+.optionItem input {
+  display: none;
+}
+
+.optionItem label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.optionItem .optionText {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.optionItem .optionIndex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  background-color: #c9c9c9;
+  border: 1px solid #d3d3d3;
+  border-radius: 6px;
+}
+
+.optionItem input:checked+label .optionIndex {
+  background-color: #2196f3;
+}
+
 @media (max-width: 459.9px) {
 
   .headGroup {
@@ -1295,6 +1401,7 @@ section+section {
 }
 
 @media print {
+
   header,
   footer,
   .refresh,
@@ -1308,15 +1415,19 @@ section+section {
   table thead th i {
     display: none !important;
   }
+
   table thead th {
     position: inherit;
   }
+
   .hidePrint {
     display: table-row;
   }
+
   .caption {
     display: table-cell !important;
   }
+
   .order,
   .resultContainer,
   .view {
@@ -1324,17 +1435,21 @@ section+section {
     min-width: 100% !important;
     max-width: 100% !important;
   }
+
   .users {
     margin: 0px !important;
   }
+
   html {
     margin: 0cm;
   }
+
   .tableContents {
     width: 100%;
     overflow-x: hidden !important;
     display: inherit !important;
   }
+
   /*
   table {
     width: 100% !important;

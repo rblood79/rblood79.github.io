@@ -93,7 +93,7 @@ const App = (props) => {
       return;
     }
     try {
-      
+
       const userDocRef = doc(props.manage, "meta", "users", userId);
       const transformedAnswers = {};
       Object.keys(answers).forEach(testId => {
@@ -123,67 +123,74 @@ const App = (props) => {
   return (
     <div className='resultContainer'>
       {/* 버튼 형태의 필터 선택 UI */}
-      <div>
+      <div className='typeGroup'>
         <button
+          disabled={mentalComplete}
+          className='typeButton'
           onClick={() => {
             setSelectedType("mental_health");
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: selectedType === "mental_health" ? "#007bff" : "#eee",
-            color: selectedType === "mental_health" ? "#fff" : "#000",
-            padding: "8px 16px",
-            border: "none",
+            backgroundColor: mentalComplete ? "#999" : (selectedType === "mental_health" ? "#007bff" : "#eee"),
+            color: mentalComplete ? "#fff" : (selectedType === "mental_health" ? "#fff" : "#000"),
+
           }}
         >
-          정신건강 {mentalComplete ? " (테스트 완료)" : ""}
+          <i className="ri-brain-line"></i>
+          <span>정신건강</span>{mentalComplete ? " (테스트 완료)" : "(테스트 미완료)"}
         </button>
         <button
+          disabled={physicalComplete}
+          className='typeButton'
           onClick={() => {
             setSelectedType("physical_health");
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: selectedType === "physical_health" ? "#007bff" : "#eee",
-            color: selectedType === "physical_health" ? "#fff" : "#000",
-            padding: "8px 16px",
-            border: "none",
+            backgroundColor: physicalComplete ? "#999" : (selectedType === "physical_health" ? "#007bff" : "#eee"),
+            color: physicalComplete ? "#fff" : (selectedType === "physical_health" ? "#fff" : "#000"),
           }}
         >
-          신체건강 {physicalComplete ? " (테스트 완료)" : ""}
+          <i className="ri-body-scan-line"></i>
+          <span>신체건강</span>{physicalComplete ? " (테스트 완료)" : "(테스트 미완료)"}
         </button>
       </div>
-      
+
       {/* 현재 테스트의 질문을 한 번에 하나씩 표시 */}
-      <div>
-        <h3>{currentTest.test_name} 테스트</h3>
-        <p>
-          <strong>{`Q${currentQuestionIndex + 1} 문제:`}</strong> {currentTest.questions[currentQuestionIndex].question}
-        </p>
-        <div>
-          {currentTest.questions[currentQuestionIndex].options.map((option, optionIndex) => (
-            <div key={optionIndex}>
-              <input
-                type="radio"
-                id={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}
-                name={`question-${currentTest.id}-${currentQuestionIndex}`}
-                value={option}
-                checked={currentAnswer === option}
-                onChange={(e) =>
-                  setAnswers(prev => ({
-                    ...prev,
-                    [currentTest.id]: {
-                      ...(prev[currentTest.id] || {}),
-                      [currentQuestionIndex]: e.target.value
-                    }
-                  }))
-                }
-              />
-              <label htmlFor={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}>
-                {option}
-              </label>
-            </div>
-          ))}
+      <div className='questionContainer'>
+        <h3 className='questionType'>{currentTest.test_name} 테스트</h3>
+        <div className='questionGroup'>
+          <p className='questionText'>
+            <strong>{`Q${currentQuestionIndex + 1}.`}</strong> {currentTest.questions[currentQuestionIndex].question}
+          </p>
+          <div className='optionsContainer'>
+            {currentTest.questions[currentQuestionIndex].options.map((option, optionIndex) => (
+              <div key={optionIndex} className='optionItem'>
+                <input
+                  type="radio"
+                  id={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}
+                  name={`question-${currentTest.id}-${currentQuestionIndex}`}
+                  value={option}
+                  checked={currentAnswer === option}
+                  onChange={(e) =>
+                    setAnswers(prev => ({
+                      ...prev,
+                      [currentTest.id]: {
+                        ...(prev[currentTest.id] || {}),
+                        [currentQuestionIndex]: e.target.value
+                      }
+                    }))
+                  }
+                />
+                <label htmlFor={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}>
+                  <span className='optionText'>{option}</span>
+                  <span className='optionIndex'>{optionIndex}</span>
+                </label>
+
+              </div>
+            ))}
+          </div>
         </div>
         {/* 이전과 다음(또는 제출) 버튼을 함께 표시 */}
         <div>
