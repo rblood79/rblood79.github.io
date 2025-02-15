@@ -1,12 +1,9 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import context from '../component/Context';
 import moment from "moment";
 import * as XLSX from 'xlsx';
 
 const App = (props) => {
-  const state = useContext(context);
-  const { user } = state;
 
   // 선택한 질문 ID와 사용자 답변 리스트 상태
   const [selectedQuestionId] = useState("0"); // 예시: "0"번 질문
