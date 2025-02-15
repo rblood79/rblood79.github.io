@@ -334,7 +334,7 @@ const App = (props) => {
           <section id='section2'>
             {selectedTeam && (
               <div>
-                <h3 className='teamStatsTitle'>{selectedTeam}의 테스트 분석표</h3>
+                <h3 className='teamStatsTitle teamStatsRe'>{selectedTeam}의 테스트 분석표</h3>
                 <table className='noUserTable'>
                   <colgroup>
                     <col style={{ width: '150px' }} />
@@ -390,7 +390,7 @@ const App = (props) => {
           
 
           <section id='section3' >
-            <h3 className='teamStatsTitle'>{selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)</h3>
+            <h3 className='teamStatsTitle teamStatsUniq'>{selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)</h3>
             {/* 수정: 미작성자 리스트를 공장명 기준 Excel 정렬 순서로 정렬 */}
             {(() => {
               const factoryOrder = {
@@ -404,6 +404,12 @@ const App = (props) => {
                 .sort((a, b) => (factoryOrder[a.team] ?? 99) - (factoryOrder[b.team] ?? 99));
               return sortedNoUser.length > 0 ? (
                 <table className='noUserTable'>
+                  <colgroup>
+                    <col style={{ width: '86px' }} />
+                    <col style={{ width: '128px' }} />
+                    <col style={{ width: 'auto' }} />
+                    <col style={{ width: 'auto' }} />
+                  </colgroup>
                   <thead>
                     <tr>
                       <th>아이디</th>

@@ -75,8 +75,9 @@ const App = (props) => {
         <div className='visual'>
           <div className='visualText'>
             <div className='textGroup'>
-              <span>체</span><span>크</span><span>리</span><span>스</span>
-              <span>대</span><span>장</span>
+              <span>항</span><span>공</span><span>정</span><span>비</span><span>사</span>
+              <span>피</span><span>로</span><span>도</span><span>관</span><span>리</span>
+              <span>체</span><span>크</span><span>리</span><span>스</span><span>트</span>
             </div>
             <img className='visualLogo' src={mnd} alt={'logo'} />
           </div>

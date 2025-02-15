@@ -15,7 +15,7 @@
   align-items: center;
   width: 100%;
 
-  background: #0078D4;
+  background: #003452;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -29,7 +29,7 @@
   width: 100%;
   color: #005aa0;
   z-index: 1;
-  padding-bottom: 16px;
+  padding-bottom: 0px;
   min-height: 48px;
   height: 48px;
 }
@@ -209,7 +209,7 @@
   margin: 0;
   text-indent: 16px;
   border-radius: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #303038;
   transition: all 0.3s ease-in-out;
 }
 
@@ -270,13 +270,15 @@
 .login .visual {
   position: relative;
   flex: 1;
-  border-top-left-radius: .125rem;
-  border-top-right-radius: .125rem;
-  /*border-radius: 8px;*/
-  background-image: url("./assets/base.jpg");
-  background-position: center;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  background-color: #1e576a;
+  background-position: bottom;
   background-repeat: no-repeat;
   background-size: cover;
+
+  background-image: url("./assets/sky.jpg");
+  background-blend-mode: color-burn;
   border: 1px solid rgba(0, 0, 0, 0.48);
   border-bottom: 0px;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.24);
@@ -312,13 +314,13 @@
 
 .login .visual .visualText .textGroup {
   display: grid;
-  gap: 2px;
-  grid-template-columns: repeat(4, 36px);
+  gap: 4px;
+  grid-template-columns: repeat(5, 36px);
   grid-template-rows: repeat(3, 36px);
 }
 
 .login .visual .visualText .textGroup span {
-  border: 1px solid #fff;
+  border: 1px solid rgba(0, 0, 0, 0.24);
   font-size: 26px;
   font-weight: 900;
   line-height: 24px;
@@ -330,51 +332,14 @@
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.24);
+  border-radius: 6px;
 }
 
-.login .visual .visualText .textGroup span:nth-child(1) {
-  grid-column: 1;
-  grid-row: 1;
-}
 
-.login .visual .visualText .textGroup span:nth-child(2) {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.login .visual .visualText .textGroup span:nth-child(3) {
-  grid-column: 3;
-  grid-row: 1;
-}
-
-.login .visual .visualText .textGroup span:nth-child(4) {
-  grid-column: 4;
-  grid-row: 1;
-}
-
-.login .visual .visualText .textGroup span:nth-child(5) {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.login .visual .visualText .textGroup span:nth-child(6) {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.login .visual .visualText .textGroup span:nth-child(7) {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-.login .visual .visualText .textGroup span:nth-child(8) {
-  grid-column: 4;
-  grid-row: 2;
-}
 
 .visualLogo {
-  width: 148px;
-  padding-top: 16px;
+  width: 164px;
+  padding-top: 24px;
 }
 
 .order,
@@ -470,7 +435,7 @@
   font-weight: 600;
   line-height: 36px;
   text-align: left;
-  color: #0067b8;
+  color: #1e576a;
   display: flex;
   justify-content: center;
 }
@@ -648,7 +613,7 @@
 
 .nav::before {
   content: '';
-  background: #0078D4;
+  background: #003452;
   left: 0;
   top: 0px;
   position: absolute;
@@ -1294,7 +1259,8 @@ table thead th i {
 }
 
 .optionItem input:checked+label .optionIndex {
-  background-color: #2196f3;
+  background-color: #1e576a;
+  color: #fff;
 }
 
 .teamStatsSection {
@@ -1338,6 +1304,14 @@ table thead th i {
   font-size: 16px;
 }
 
+.teamStatsUniq {
+  background: #c8a86d;
+}
+
+.teamStatsRe {
+  background: #6db3c8;
+}
+
 .questionContainer .teamStatsTitle {
   margin-top: 0px;
 }
@@ -1353,6 +1327,7 @@ table thead th i {
   width: 100%;
   height: 100%;
   border-collapse: collapse;
+  /*table-layout: fixed;*/
 }
 
 .noUserTable th {
@@ -1363,7 +1338,7 @@ table thead th i {
 }
 
 .noUserTable td {
-  padding: 16px 8px;
+  padding: 16px 4px;
   border: 1px solid #d3d3d3;
   background-color: #fff;
   height: 48px;
@@ -1403,8 +1378,7 @@ section {
 .excel {
   background: #107c41;
   color: #fff;
-  border: 1px solid #107c41;
-  /* padding: 8px 16px; */
+  border: 1px solid rgba(0,0,0,0.24);
   border-radius: 16px;
   display: flex;
   flex-direction: row;

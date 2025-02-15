@@ -143,7 +143,7 @@ const App = (props) => {
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: mentalComplete ? "#cbcbcb" : (selectedType === "mental_health" && "#007bff"),
+            backgroundColor: mentalComplete ? "#cbcbcb" : (selectedType === "mental_health" && "#3492b1"),
             color: mentalComplete ? "#fff" : (selectedType === "mental_health" ? "#fff" : "#000"),
 
           }}
@@ -160,7 +160,7 @@ const App = (props) => {
             setCurrentQuestionIndex(0);
           }}
           style={{
-            backgroundColor: physicalComplete ? "#cbcbcb" : (selectedType === "physical_health" && "#007bff"),
+            backgroundColor: physicalComplete ? "#cbcbcb" : (selectedType === "physical_health" && "#3492b1"),
             color: physicalComplete ? "#fff" : (selectedType === "physical_health" ? "#fff" : "#000"),
           }}
         >
