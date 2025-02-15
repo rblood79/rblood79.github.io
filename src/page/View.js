@@ -27,14 +27,14 @@ const App = (props) => {
       const querySnapshot = await getDocs(usersRef);
       const results = [];
       let counter = 1; // 순번 시작값
-  
+
       querySnapshot.forEach(docSnap => {
         const data = docSnap.data();
         // "admin" 팀인 경우 제외
         if (data.team && data.team.toLowerCase() === "admin") return;
         // answers 객체는 결과에 포함하지 않음
         const { answers, ...rest } = data;
-  
+
         let totalTest1 = null;
         let totalTest2 = null;
         if (answers && answers[selectDay]) {
@@ -46,30 +46,30 @@ const App = (props) => {
             ? Object.values(dayAnswers.test_2).reduce((acc, cur) => acc + Number(cur), 0)
             : 0;
         }
-  
+
         // password 컬럼 제거 및 키명 변경 처리
         const newData = { ...rest, totalTest1, totalTest2, id: docSnap.id };
         delete newData.password;
-        
+
         newData["아이디"] = newData.id;
         delete newData.id;
-        
+
         // "작업자" -> "작성자" 로 변경
         newData["작성자"] = newData.name;
         delete newData.name;
-        
+
         newData["계급"] = newData.rank;
         delete newData.rank;
-        
+
         newData["공장명"] = newData.team;
         delete newData.team;
-        
+
         newData["정신건강"] = newData.totalTest1;
         delete newData.totalTest1;
-        
+
         newData["신체건강"] = newData.totalTest2;
         delete newData.totalTest2;
-        
+
         // 원하는 순서대로 키를 재조합
         const orderedData = {
           "순번": counter++,
@@ -80,14 +80,35 @@ const App = (props) => {
           "정신건강": newData["정신건강"],
           "신체건강": newData["신체건강"]
         };
-  
+
         results.push(orderedData);
       });
       console.log("Excel Data:", results);
-      
+
       // XLSX 라이브러리를 이용하여 results 데이터를 .xlsx 파일로 다운로드
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(results);
+
+      // 각 열의 너비를 순서대로 72, 97, 129, 69, 72, 72, 72 로 설정
+      worksheet["!cols"] = [
+        { wch: 8.38 },  // 순번
+        { wch: 11.50 },  // 아이디
+        { wch: 15.50 }, // 공장명
+        { wch: 8.00 },  // 계급
+        { wch: 8.38 },  // 작성자
+        { wch: 8.38 },  // 정신건강
+        { wch: 8.38 }   // 신체건강
+      ];
+
+      // 모든 셀에 대해 폰트, 크기, 가운데 정렬 지정
+      for (const cell in worksheet) {
+        if (cell[0] === '!') continue;
+        worksheet[cell].s = {
+          font: { name: "맑은고딕", sz: 10 },
+          alignment: { horizontal: "center" }
+        };
+      }
+      
       XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
       XLSX.writeFile(workbook, `ExcelData_${selectDay}.xlsx`);
     } catch (error) {
@@ -223,7 +244,7 @@ const App = (props) => {
 
         <div className='tableContents'>
 
-          <section id='section1' className='teamStatsSection' style={{ gap: selectedTeam && '8px', marginTop: userAnswers.length>0 && '16px'}}>
+          <section id='section1' className='teamStatsSection' style={{ gap: selectedTeam && '8px', marginTop: userAnswers.length > 0 && '16px' }}>
             {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
             {Object.entries(teamStats).map(([team, counts]) => {
               let iconClass = '';
@@ -274,13 +295,13 @@ const App = (props) => {
                     background: selectedTeam === team ? backgroundColor : '#fff',
                     color: selectedTeam === team ? '#fff' : '#000',
                     aspectRatio: selectedTeam && 0,
-                    
+
                   }}
                   onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}>
-                  <i className={iconClass} style={{ display: selectedTeam && 'none'}}></i>
-                  <h3 className='teamStatsText' style={{ fontSize: selectedTeam && '14px', margin: selectedTeam && 0, color: selectedTeam === team ? '#fff' : backgroundColor}}>{team}</h3>
-                  <p className='teamStatsMen' style={{ display: selectedTeam && 'none'}} >정신건강 ({counts.test_1}명)</p>
-                  <p className='teamStatsPhy' style={{ display: selectedTeam && 'none'}} >신체건강 ({counts.test_2}명)</p>
+                  <i className={iconClass} style={{ display: selectedTeam && 'none' }}></i>
+                  <h3 className='teamStatsText' style={{ fontSize: selectedTeam && '14px', margin: selectedTeam && 0, color: selectedTeam === team ? '#fff' : backgroundColor }}>{team}</h3>
+                  <p className='teamStatsMen' style={{ display: selectedTeam && 'none' }} >정신건강 ({counts.test_1}명)</p>
+                  <p className='teamStatsPhy' style={{ display: selectedTeam && 'none' }} >신체건강 ({counts.test_2}명)</p>
                 </div>
               );
             })}
@@ -315,8 +336,8 @@ const App = (props) => {
 
                 <table className='noUserTable'>
                   <colgroup>
-                  <col style={{ width: '80px' }} />
-                  <col style={{ width: '70px' }} />
+                    <col style={{ width: '80px' }} />
+                    <col style={{ width: '70px' }} />
                     <col style={{ width: 'auto' }} />
                   </colgroup>
                   <thead>
@@ -339,7 +360,7 @@ const App = (props) => {
                   </tbody>
                 </table>
               </div>
-            ) }
+            )}
           </section>
 
           <section id='section3' >
