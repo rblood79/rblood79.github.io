@@ -48,7 +48,7 @@
       "ie 11"
     ]
   },
-  "homepage": "./check",
+  "homepage": "./",
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
