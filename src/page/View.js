@@ -76,6 +76,17 @@ const App = (props) => {
   
         results.push(orderedData);
       });
+      
+      // 추가: 지정 순서대로 정렬
+      const factoryOrder = {
+        "기체정비공장": 0,
+        "기관정비공장": 1,
+        "부품정비공장": 2,
+        "특수제작공장": 3,
+        "KF-16 성능개량공장": 4
+      };
+      results.sort((a, b) => (factoryOrder[a["공장명"]] ?? 99) - (factoryOrder[b["공장명"]] ?? 99));
+      
       // JSON 대신 AOA (Array of Arrays) 를 이용하여, 첫 행에 selectDay 정보를 추가
       const firstRow = [`테스트 분석 날짜: ${selectDay}`, "", "", "", "", "", ""];
       const headerRow = ["순번", "아이디", "공장명", "계급", "작성자", "정신건강", "신체건강"];
@@ -100,13 +111,13 @@ const App = (props) => {
   
       // 각 열의 너비를 순서대로 72, 97, 129, 69, 72, 72, 72 로 설정
       worksheet["!cols"] = [
-        { wch: 8.38 },  // 순번
-        { wch: 11.50 },  // 아이디
-        { wch: 15.50 }, // 공장명
-        { wch: 8.00 },  // 계급
-        { wch: 8.38 },  // 작성자
-        { wch: 8.38 },  // 정신건강
-        { wch: 8.38 }   // 신체건강
+        { wch: 9 },  // 순번
+        { wch: 12 },  // 아이디
+        { wch: 18 }, // 공장명
+        { wch: 10 },  // 계급
+        { wch: 9 },  // 작성자
+        { wch: 9 },  // 정신건강
+        { wch: 9 }   // 신체건강
       ];
   
       // 모든 셀에 대해 폰트, 크기, 가운데 정렬 지정 (첫 행의 날짜 셀도 포함)
@@ -376,32 +387,46 @@ const App = (props) => {
             )}
           </section>
 
+          
+
           <section id='section3' >
             <h3 className='teamStatsTitle'>{selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)</h3>
-            {(selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser).length > 0 ? (
-              <table className='noUserTable'>
-                <thead>
-                  <tr>
-                    <th>아이디</th>
-                    <th>공장명</th>
-                    <th>계급</th>
-                    <th>작업자</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser).map(u => (
-                    <tr key={u.id}>
-                      <td>{u.number}</td>
-                      <td>{u.team}</td>
-                      <td>{u.rank}</td>
-                      <td>{u.name}</td>
+            {/* 수정: 미작성자 리스트를 공장명 기준 Excel 정렬 순서로 정렬 */}
+            {(() => {
+              const factoryOrder = {
+                "기체정비공장": 0,
+                "기관정비공장": 1,
+                "부품정비공장": 2,
+                "특수제작공장": 3,
+                "KF-16 성능개량공장": 4
+              };
+              const sortedNoUser = (selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser)
+                .sort((a, b) => (factoryOrder[a.team] ?? 99) - (factoryOrder[b.team] ?? 99));
+              return sortedNoUser.length > 0 ? (
+                <table className='noUserTable'>
+                  <thead>
+                    <tr>
+                      <th>아이디</th>
+                      <th>공장명</th>
+                      <th>계급</th>
+                      <th>작업자</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p className='answerCrear'>모든 사용자가 답변을 하였습니다.</p>
-            )}
+                  </thead>
+                  <tbody>
+                    {sortedNoUser.map(u => (
+                      <tr key={u.id}>
+                        <td>{u.number}</td>
+                        <td>{u.team}</td>
+                        <td>{u.rank}</td>
+                        <td>{u.name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className='answerCrear'>모든 사용자가 답변을 하였습니다.</p>
+              );
+            })()}
           </section>
 
         </div>

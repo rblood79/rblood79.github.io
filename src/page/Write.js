@@ -1,6 +1,7 @@
 import React, { useContext, useState, useCallback } from 'react';
 import context from '../component/Context';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import * as XLSX from 'xlsx';  // 추가된 부분
 
 const Write = (props) => {
 	const state = useContext(context);
@@ -23,6 +24,45 @@ const Write = (props) => {
 		rank: '',
 		team: ''
 	});
+
+	// 새로 추가: 대량 등록을 위한 엑셀 파일 상태와 처리 상태
+	const [excelFile, setExcelFile] = useState(null);
+	const [bulkStatus, setBulkStatus] = useState("");
+
+	const onExcelFileChange = useCallback((e) => {
+		setExcelFile(e.target.files[0]);
+	}, []);
+
+	const bulkRegisterFromExcel = useCallback(async () => {
+		if (!excelFile) {
+			alert("엑셀 파일을 선택해주세요.");
+			return;
+		}
+		const data = await excelFile.arrayBuffer();
+		const workbook = XLSX.read(data);
+		const sheetName = workbook.SheetNames[0];
+		const worksheet = workbook.Sheets[sheetName];
+		const jsonData = XLSX.utils.sheet_to_json(worksheet);
+		let successCount = 0, failCount = 0;
+		for (const row of jsonData) {
+			const { number, password, name, rank, team } = row;
+			if (!number || !password || !name || !rank || !team) continue;
+			try {
+				const userRef = doc(props.manage, "meta", "users", String(number));
+				const userSnap = await getDoc(userRef);
+				if (userSnap.exists()) {
+					await updateDoc(userRef, { password, name, rank, team });
+				} else {
+					await setDoc(userRef, { number, password, name, rank, team, answers: {} });
+				}
+				successCount++;
+			} catch (error) {
+				console.error("대량 사용자 등록 오류", error);
+				failCount++;
+			}
+		}
+		setBulkStatus(`등록 성공: ${successCount}명, 실패: ${failCount}명`);
+	}, [excelFile, props.manage]);
 
 	// 프리셋 버튼 핸들러
 	const fillMentalTest = useCallback(() => {
@@ -125,7 +165,7 @@ const Write = (props) => {
 			console.error('사용자 등록 오류', error);
 			alert('사용자 등록에 실패하였습니다.');
 		}
-	}, [userInputs]);
+	}, [userInputs, props.manage]);
 
 	return (
 		<div>
@@ -229,6 +269,14 @@ const Write = (props) => {
 					/>
 				</div>
 				<button onClick={registerUser} style={{ marginTop: '10px' }}>사용자 등록</button>
+			</div>
+
+			{/* 새로 추가: 대량 사용자 등록 (Excel) */}
+			<div style={{ marginTop: '20px' }}>
+				<h2>대량 사용자 등록 (Excel)</h2>
+				<input type="file" accept=".xlsx, .xls" onChange={onExcelFileChange} />
+				<button onClick={bulkRegisterFromExcel} style={{ marginLeft: '10px' }}>대량 등록 실행</button>
+				{bulkStatus && <p>{bulkStatus}</p>}
 			</div>
 		</div>
 	);
