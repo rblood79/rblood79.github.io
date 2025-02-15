@@ -24,14 +24,12 @@ const App = (props) => {
       const querySnapshot = await getDocs(usersRef);
       const results = [];
       let counter = 1; // 순번 시작값
-
+  
       querySnapshot.forEach(docSnap => {
         const data = docSnap.data();
-        // "admin" 팀인 경우 제외
         if (data.team && data.team.toLowerCase() === "admin") return;
-        // answers 객체는 결과에 포함하지 않음
         const { answers, ...rest } = data;
-
+  
         let totalTest1 = null;
         let totalTest2 = null;
         if (answers && answers[selectDay]) {
@@ -43,31 +41,29 @@ const App = (props) => {
             ? Object.values(dayAnswers.test_2).reduce((acc, cur) => acc + Number(cur), 0)
             : 0;
         }
-
+  
         // password 컬럼 제거 및 키명 변경 처리
         const newData = { ...rest, totalTest1, totalTest2, id: docSnap.id };
         delete newData.password;
-
+  
         newData["아이디"] = newData.id;
         delete newData.id;
-
-        // "작업자" -> "작성자" 로 변경
+  
         newData["작성자"] = newData.name;
         delete newData.name;
-
+  
         newData["계급"] = newData.rank;
         delete newData.rank;
-
+  
         newData["공장명"] = newData.team;
         delete newData.team;
-
+  
         newData["정신건강"] = newData.totalTest1;
         delete newData.totalTest1;
-
+  
         newData["신체건강"] = newData.totalTest2;
         delete newData.totalTest2;
-
-        // 원하는 순서대로 키를 재조합
+  
         const orderedData = {
           "순번": counter++,
           "아이디": newData["아이디"],
@@ -77,15 +73,31 @@ const App = (props) => {
           "정신건강": newData["정신건강"],
           "신체건강": newData["신체건강"]
         };
-
+  
         results.push(orderedData);
       });
-      //console.log("Excel Data:", results);
-
-      // XLSX 라이브러리를 이용하여 results 데이터를 .xlsx 파일로 다운로드
-      const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.json_to_sheet(results);
-
+      // JSON 대신 AOA (Array of Arrays) 를 이용하여, 첫 행에 selectDay 정보를 추가
+      const firstRow = [`테스트 분석 날짜: ${selectDay}`, "", "", "", "", "", ""];
+      const headerRow = ["순번", "아이디", "공장명", "계급", "작성자", "정신건강", "신체건강"];
+      const dataRows = results.map(row => [
+        row["순번"],
+        row["아이디"],
+        row["공장명"],
+        row["계급"],
+        row["작성자"],
+        row["정신건강"],
+        row["신체건강"],
+      ]);
+  
+      const aoaData = [firstRow, headerRow, ...dataRows];
+  
+      const worksheet = XLSX.utils.aoa_to_sheet(aoaData);
+  
+      // 첫 행(인덱스 0)의 0번부터 6번 컬럼까지 병합
+      worksheet["!merges"] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 6 } }  // 첫 행 전체 병합
+      ];
+  
       // 각 열의 너비를 순서대로 72, 97, 129, 69, 72, 72, 72 로 설정
       worksheet["!cols"] = [
         { wch: 8.38 },  // 순번
@@ -96,16 +108,17 @@ const App = (props) => {
         { wch: 8.38 },  // 정신건강
         { wch: 8.38 }   // 신체건강
       ];
-
-      // 모든 셀에 대해 폰트, 크기, 가운데 정렬 지정
+  
+      // 모든 셀에 대해 폰트, 크기, 가운데 정렬 지정 (첫 행의 날짜 셀도 포함)
       for (const cell in worksheet) {
         if (cell[0] === '!') continue;
         worksheet[cell].s = {
           font: { name: "맑은고딕", sz: 10 },
-          alignment: { horizontal: "center" }
+          alignment: { horizontal: "center", vertical: "center" }
         };
       }
-      
+  
+      const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
       XLSX.writeFile(workbook, `report_${selectDay}.xlsx`);
     } catch (error) {
