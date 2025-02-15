@@ -1,4 +1,4 @@
-import _ from 'lodash';
+
 import 'remixicon/fonts/remixicon.css';
 import React, { useState, useEffect } from 'react';
 import { query, where, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';

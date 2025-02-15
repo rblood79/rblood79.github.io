@@ -1301,7 +1301,7 @@ table thead th i {
   display: grid;
   gap: 16px;
   width: 100%;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(5, 1fr);
 }
 
 .teamStatsSection .teamStats {
@@ -1379,7 +1379,7 @@ section {
 }
 
 .day-selector {
-  width: 100%;
+  flex: 1;
 }
 
 .dayInput {
@@ -1414,6 +1414,10 @@ section {
 
   width: 48px;
   height: 48px;
+}
+
+.excel i {
+  font-size: 18px;
 }
 
 @media (max-width: 459.9px) {
@@ -1527,6 +1531,10 @@ section {
 
   .formWrap select {
     min-width: 100px;
+  }
+
+  .teamStatsSection {
+    grid-template-columns: repeat(2, 1fr);
   }
 
 

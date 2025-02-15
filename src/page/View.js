@@ -80,7 +80,7 @@ const App = (props) => {
 
         results.push(orderedData);
       });
-      console.log("Excel Data:", results);
+      //console.log("Excel Data:", results);
 
       // XLSX 라이브러리를 이용하여 results 데이터를 .xlsx 파일로 다운로드
       const workbook = XLSX.utils.book_new();
@@ -107,7 +107,7 @@ const App = (props) => {
       }
       
       XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
-      XLSX.writeFile(workbook, `ExcelData_${selectDay}.xlsx`);
+      XLSX.writeFile(workbook, `report_${selectDay}.xlsx`);
     } catch (error) {
       console.error("Excel fetch error", error);
     }
@@ -231,7 +231,10 @@ const App = (props) => {
               id="selectDay"
               className='dayInput'
               value={selectDay}
-              onChange={(e) => setSelectDay(e.target.value)}
+              onChange={(e) => {
+                setSelectDay(e.target.value);
+                setSelectedTeam(null);
+              }}
             />
           </div>
           <button className='excel' onClick={handleExcelClick}>
