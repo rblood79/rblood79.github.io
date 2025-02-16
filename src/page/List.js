@@ -1,28 +1,58 @@
+
 import 'remixicon/fonts/remixicon.css';
 import React, { useState, useEffect } from 'react';
 import { query, where, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import moment from "moment";
 
 const App = (props) => {
+  // 두 테스트 데이터를 동시에 관리 (각각 mental_health, physical_health)
   const [testsRecord, setTestsRecord] = useState({});
+  // 현재 선택된 테스트 유형
   const [selectedType, setSelectedType] = useState("mental_health");
+  // 현재 질문 인덱스
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  // 각 테스트별 질문 답변 저장 (예: { [testId]: { [questionIndex]: answer } })
   const [answers, setAnswers] = useState({});
+  //const [storedAnswers, setStoredAnswers] = useState({});
 
+  // 컴포넌트 마운트 시 기존 사용자 answers 로드
+  /*useEffect(() => {
+    async function fetchUserStoredAnswers() {
+      const userId = localStorage.getItem('user');
+      if (!userId) return;
+      const userDocRef = doc(props.manage, "meta", "users", userId);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const data = userDocSnap.data();
+        if (data.answers) {
+          setAnswers(data.answers);
+        }
+      }
+    }
+    fetchUserStoredAnswers();
+  }, [props.manage]);*/
+
+  // mental_health 테스트 데이터 fetch
   useEffect(() => {
-    fetchTestData("mental_health");
-    fetchTestData("physical_health");
-  }, [props.manage]);
-
-  const fetchTestData = (testType) => {
-    const q = query(props.manage, where("test_type", "==", testType));
+    const q = query(props.manage, where("test_type", "==", "mental_health"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedTest = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
-      setTestsRecord(prev => ({ ...prev, [testType]: fetchedTest }));
+      setTestsRecord(prev => ({ ...prev, mental_health: fetchedTest }));
     });
     return () => unsubscribe();
-  };
+  }, [props.manage]);
 
+  // physical_health 테스트 데이터 fetch
+  useEffect(() => {
+    const q = query(props.manage, where("test_type", "==", "physical_health"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedTest = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
+      setTestsRecord(prev => ({ ...prev, physical_health: fetchedTest }));
+    });
+    return () => unsubscribe();
+  }, [props.manage]);
+
+  // 현재 선택된 테스트가 없으면 표시
   if (!testsRecord.mental_health || !testsRecord.physical_health) {
     return <div className='resultContainer'>데이터가 없습니다.</div>;
   }
@@ -31,23 +61,25 @@ const App = (props) => {
   if (!currentTest || !currentTest.questions || currentTest.questions.length === 0) {
     return <div className='resultContainer'>데이터가 없습니다.</div>;
   }
-
+  // 현재 테스트에 대한 현재 질문의 선택값
   const currentAnswer = answers[currentTest.id]?.[currentQuestionIndex] || "";
-  const mentalComplete = isTestComplete("mental_health");
-  const physicalComplete = isTestComplete("physical_health");
+
+  // 두 테스트의 완료 여부 계산
+  const mentalComplete = testsRecord.mental_health && answers[testsRecord.mental_health.id] &&
+    Object.keys(answers[testsRecord.mental_health.id]).length === testsRecord.mental_health.questions.length;
+  const physicalComplete = testsRecord.physical_health && answers[testsRecord.physical_health.id] &&
+    Object.keys(answers[testsRecord.physical_health.id]).length === testsRecord.physical_health.questions.length;
   const allComplete = mentalComplete && physicalComplete;
 
-  const isTestComplete = (testType) => {
-    return testsRecord[testType] && answers[testsRecord[testType].id] &&
-      Object.keys(answers[testsRecord[testType].id]).length === testsRecord[testType].questions.length;
-  };
-
+  // 수정된 handleNext 함수
   const handleNext = () => {
     if (currentQuestionIndex < currentTest.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
+      // 현재 선택한 타입의 마지막 질문인 경우 다른 테스트가 완료되지 않았다면 전환
       const otherType = selectedType === "mental_health" ? "physical_health" : "mental_health";
-      if (!isTestComplete(otherType)) {
+      const otherTestComplete = otherType === "mental_health" ? mentalComplete : physicalComplete;
+      if (!otherTestComplete) {
         setSelectedType(otherType);
         setCurrentQuestionIndex(0);
       } else {
@@ -56,6 +88,7 @@ const App = (props) => {
     }
   };
 
+  // 새로 추가: 사용자가 모든 질문에 답한 후, "users" 컬렉션의 문서에 답변을 저장하는 함수
   const handleSubmit = async () => {
     const userId = localStorage.getItem('user');
     if (!userId) {
@@ -64,11 +97,28 @@ const App = (props) => {
     }
     try {
       const userDocRef = doc(props.manage, "meta", "users", userId);
+      // 오늘 날짜를 key로 생성
       const today = moment().format("YYYY-MM-DD");
+
+      // 기존 답변 가져오기
       const userDocSnap = await getDoc(userDocRef);
       const prevAnswers = userDocSnap.exists() && userDocSnap.data().answers ? userDocSnap.data().answers : {};
 
-      const transformedAnswers = transformAnswers();
+      const transformedAnswers = {};
+      Object.keys(answers).forEach(testId => {
+        const testAnswers = answers[testId];
+        const testType = testsRecord.mental_health.id === testId ? "mental_health" : "physical_health";
+        transformedAnswers[testId] = {};
+        Object.keys(testAnswers).forEach(questionIndex => {
+          const answer = testAnswers[questionIndex];
+          if (testType === "mental_health") {
+            transformedAnswers[testId][questionIndex] = answer === "없음" ? 0 : answer === "2일 이상" ? 1 : answer === "1주일 이상" ? 2 : 3;
+          } else if (testType === "physical_health") {
+            transformedAnswers[testId][questionIndex] = answer === "매우 맞음" ? 1 : answer === "맞음" ? 2 : answer === "보통" ? 3 : answer === "아님" ? 4 : 5;
+          }
+        });
+      });
+      // 오늘 날짜 key에 새 답변 저장 및 기존 데이터 병합
       const newAnswers = {
         ...prevAnswers,
         [today]: transformedAnswers
@@ -81,38 +131,9 @@ const App = (props) => {
     }
   };
 
-  const transformAnswers = () => {
-    const transformedAnswers = {};
-    Object.keys(answers).forEach(testId => {
-      const testAnswers = answers[testId];
-      const testType = testsRecord.mental_health.id === testId ? "mental_health" : "physical_health";
-      transformedAnswers[testId] = {};
-      Object.keys(testAnswers).forEach(questionIndex => {
-        const answer = testAnswers[questionIndex];
-        transformedAnswers[testId][questionIndex] = getTransformedAnswer(testType, answer);
-      });
-    });
-    return transformedAnswers;
-  };
-
-  const getTransformedAnswer = (testType, answer) => {
-    if (testType === "mental_health") {
-      return answer === "없음" ? 0 : answer === "2일 이상" ? 1 : answer === "1주일 이상" ? 2 : 3;
-    } else if (testType === "physical_health") {
-      return answer === "매우 맞음" ? 1 : answer === "맞음" ? 2 : answer === "보통" ? 3 : answer === "아님" ? 4 : 5;
-    }
-  };
-
-  const getButtonStyle = (type) => {
-    const isComplete = type === "mental_health" ? mentalComplete : physicalComplete;
-    return {
-      backgroundColor: isComplete ? "#cbcbcb" : (selectedType === type && "#3492b1"),
-      color: isComplete ? "#fff" : (selectedType === type ? "#fff" : "#000")
-    };
-  };
-
   return (
     <div className='resultContainer'>
+      {/* 버튼 형태의 필터 선택 UI */}
       <div className='typeGroup'>
         <button
           disabled={mentalComplete}
@@ -121,7 +142,11 @@ const App = (props) => {
             setSelectedType("mental_health");
             setCurrentQuestionIndex(0);
           }}
-          style={getButtonStyle("mental_health")}
+          style={{
+            backgroundColor: mentalComplete ? "#cbcbcb" : (selectedType === "mental_health" && "#3492b1"),
+            color: mentalComplete ? "#fff" : (selectedType === "mental_health" ? "#fff" : "#000"),
+
+          }}
         >
           <i className="ri-brain-line"></i>
           <h3 className='teamStatsText'>정신건강</h3>
@@ -134,7 +159,10 @@ const App = (props) => {
             setSelectedType("physical_health");
             setCurrentQuestionIndex(0);
           }}
-          style={getButtonStyle("physical_health")}
+          style={{
+            backgroundColor: physicalComplete ? "#cbcbcb" : (selectedType === "physical_health" && "#3492b1"),
+            color: physicalComplete ? "#fff" : (selectedType === "physical_health" ? "#fff" : "#000"),
+          }}
         >
           <i className="ri-body-scan-line"></i>
           <h3 className='teamStatsText'>신체건강</h3>
@@ -142,6 +170,7 @@ const App = (props) => {
         </button>
       </div>
 
+      {/* 현재 테스트의 질문을 한 번에 하나씩 표시 */}
       <div className='questionContainer'>
         <h3 className='teamStatsTitle'>{currentTest.test_name} 테스트</h3>
         <div className='questionGroup'>
@@ -168,17 +197,35 @@ const App = (props) => {
                   }
                 />
                 <label htmlFor={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}>
+                  
                   <span className='optionIndex'>{optionIndex}</span>
                   <span className='optionText'>{option}</span>
                 </label>
+
               </div>
             ))}
           </div>
         </div>
+
       </div>
+      {/* 이전과 다음(또는 제출) 버튼을 함께 표시 */}
       <div className='controll'>
         <div className='buttonContainer'>
+          {/* 
           <button
+            className={'button'}
+            disabled={currentQuestionIndex === 0}
+            onClick={() => {
+              if (currentQuestionIndex > 0) {
+                setCurrentQuestionIndex(currentQuestionIndex - 1);
+              }
+            }}
+          >
+            이전
+          </button>
+          */}
+          <button
+            // 수정된 disabled 조건: 현재 질문에 답변이 없거나 모든 테스트가 완료되었으면 비활성화
             style={{ flex: !allComplete && 4 }}
             className={'button'}
             disabled={!currentAnswer || allComplete}
@@ -189,6 +236,7 @@ const App = (props) => {
           <button
             style={{ flex: allComplete && 4 }}
             className={'button'}
+            // 모든 테스트가 완료된 경우에만 활성화
             disabled={!allComplete}
             onClick={handleSubmit}
           >
