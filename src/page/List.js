@@ -150,7 +150,7 @@ const App = (props) => {
         >
           <i className="ri-brain-line"></i>
           <h3 className='teamStatsText'>정신건강</h3>
-          {<span>{mentalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.mental_health.id] || {}).length}/${testsRecord.mental_health.questions.length})`}</span>}
+          <span>{mentalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.mental_health.id] || {}).length}/${testsRecord.mental_health.questions.length})`}</span>
         </button>
         <button
           disabled={physicalComplete}
@@ -166,7 +166,7 @@ const App = (props) => {
         >
           <i className="ri-body-scan-line"></i>
           <h3 className='teamStatsText'>신체건강</h3>
-          {/* <span>{physicalComplete ? " (완료)" : "(미완료)"}</span> */}
+          <span>{physicalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.physical_health.id] || {}).length}/${testsRecord.physical_health.questions.length})`}</span>
         </button>
       </div>
 
