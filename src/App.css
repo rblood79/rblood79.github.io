@@ -212,6 +212,7 @@
   border: 1px solid rgba(48, 48, 56, 0.36);
   transition: all 0.3s ease-in-out;
   font-size: 16px;
+  font-weight: 600;
 }
 
 .input input:focus {
@@ -1390,6 +1391,7 @@ section {
   border-radius: 16px;
   padding: 0 16px;
   font-size: 16px;
+  font-weight: 600;
   width: 100%;
   box-sizing: border-box;
   text-align: start !important;
