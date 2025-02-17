@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import moment from "moment";
 import * as XLSX from 'xlsx';
+import { factoryOrder, rankOrder } from '../utils/sortOrders';
 
 const App = (props) => {
 
@@ -78,29 +79,6 @@ const App = (props) => {
       });
 
       // 추가: 지정 순서대로 정렬 후, "계급" (사용자 지정 순서) 및 "작성자" 기준으로 추가 정렬
-      const factoryOrder = {
-        "기체정비공장": 0,
-        "기관정비공장": 1,
-        "부품정비공장": 2,
-        "특수제작공장": 3,
-        "KF-16 성능개량공장": 4
-      };
-      const rankOrder = {
-        "5급군무원": 0,
-        "6급군무원": 1,
-        "7급군무원": 2,
-        "8급군무원": 3,
-        "9급군무원": 4,
-        "준위": 5,
-        "원사": 6,
-        "상사": 7,
-        "중사": 8,
-        "하사": 9,
-        "병장": 10,
-        "상등병": 11,
-        "일등병": 12,
-        "이등병": 13
-      };
       results.sort((a, b) => {
         const factoryDiff = (factoryOrder[a["공장명"]] ?? 99) - (factoryOrder[b["공장명"]] ?? 99);
         if (factoryDiff !== 0) return factoryDiff;
@@ -503,29 +481,7 @@ const App = (props) => {
               {selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)
             </h3>
             {(() => {
-              const factoryOrder = {
-                "기체정비공장": 0,
-                "기관정비공장": 1,
-                "부품정비공장": 2,
-                "특수제작공장": 3,
-                "KF-16 성능개량공장": 4
-              };
-              const rankOrder = {
-                "5급군무원": 0,
-                "6급군무원": 1,
-                "7급군무원": 2,
-                "8급군무원": 3,
-                "9급군무원": 4,
-                "준위": 5,
-                "원사": 6,
-                "상사": 7,
-                "중사": 8,
-                "하사": 9,
-                "병장": 10,
-                "상등병": 11,
-                "일등병": 12,
-                "이등병": 13
-              };
+              // import한 factoryOrder, rankOrder 로 정렬
               const sortedNoUser = (selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser)
                 .sort((a, b) => {
                   const factoryDiff = (factoryOrder[a.team] ?? 99) - (factoryOrder[b.team] ?? 99);
