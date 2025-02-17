@@ -87,18 +87,25 @@ const App = (props) => {
       });
 
       const workbook = XLSX.utils.book_new();
-      // 각 그룹에 대해 시트 생성
+      // 시트 이름 매핑
+      const sheetNameMapping = {
+        "기체정비공장": "기체",
+        "기관정비공장": "기관",
+        "부품정비공장": "부품",
+        "특수제작공장": "제작",
+        "KF-16 성능개량공장": "성능"
+      };
+
       Object.entries(grouped).forEach(([group, rows]) => {
-        // 그룹 내 추가 정렬: rank 및 작성자 기준
+        const sheetName = sheetNameMapping[group] || group;
         const sortedRows = rows.sort((a, b) => {
           const rankDiff = (rankOrder[a["계급"]] ?? 99) - (rankOrder[b["계급"]] ?? 99);
           if (rankDiff !== 0) return rankDiff;
           return (a["작성자"] || "").localeCompare(b["작성자"] || "");
         });
-        // 재순번 부여
         sortedRows.forEach((row, index) => row["순번"] = index + 1);
 
-        const firstRow = [`테스트 분석 날짜: ${selectDay} - ${group}`, "", "", "", "", "", ""];
+        const firstRow = [`${sheetName} 체크리스트분석 날짜: ${selectDay}`, "", "", "", "", "", ""];
         const headerRow = ["순번", "아이디", "공장명", "계급", "작성자", "정신건강", "신체건강"];
         const dataRows = sortedRows.map(row => [
           row["순번"],
@@ -132,7 +139,7 @@ const App = (props) => {
             alignment: { horizontal: "center", vertical: "center" }
           };
         }
-        XLSX.utils.book_append_sheet(workbook, worksheet, group);
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
       });
       XLSX.writeFile(workbook, `report_${selectDay}.xlsx`);
     } catch (error) {
