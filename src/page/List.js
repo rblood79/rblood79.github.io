@@ -197,8 +197,19 @@ const App = (props) => {
                   }
                 />
                 <label htmlFor={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}>
-                  
-                  <span className='optionIndex'>{optionIndex}</span>
+
+                  <span className='optionIndex'>
+                    {/*<i className={
+                      optionIndex === 0 ? "ri-emotion-happy-line" :
+                        optionIndex === 1 ? "ri-emotion-normal-line" :
+                          optionIndex === 2 ? "ri-emotion-unhappy-line" :
+                            optionIndex === 3 ? "ri-emotion-sad-line" :
+                              "ri-emotion-happy-line"
+                    }></i>*/}
+                    {
+                      selectedType === "mental_health" ? optionIndex : optionIndex + 1
+                    }
+                  </span>
                   <span className='optionText'>{option}</span>
                 </label>
 

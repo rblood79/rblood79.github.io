@@ -138,7 +138,7 @@ const App = (props) => {
                 onClick={onCheck}
                 disabled={!number || !pw} // 아이디나 비밀번호가 비어있으면 비활성화
               >
-                확인
+                시작하기
               </button>
             </div>
           </div>
