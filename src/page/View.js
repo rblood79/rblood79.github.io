@@ -78,64 +78,62 @@ const App = (props) => {
         results.push(orderedData);
       });
 
-      // 추가: 지정 순서대로 정렬 후, "계급" (사용자 지정 순서) 및 "작성자" 기준으로 추가 정렬
-      results.sort((a, b) => {
-        const factoryDiff = (factoryOrder[a["공장명"]] ?? 99) - (factoryOrder[b["공장명"]] ?? 99);
-        if (factoryDiff !== 0) return factoryDiff;
-        const rankDiff = (rankOrder[a["계급"]] ?? 99) - (rankOrder[b["계급"]] ?? 99);
-        if (rankDiff !== 0) return rankDiff;
-        return (a["작성자"] || "").localeCompare(b["작성자"] || "");
+      // 그룹핑: 공장명 별로 rows 분리
+      const grouped = {};
+      results.forEach(row => {
+        const key = row["공장명"] || "미지정";
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(row);
       });
-      
-      // sorting 후, "순번" 을 순서대로 재지정
-      results.forEach((row, index) => {
-        row["순번"] = index + 1;
-      });
-      
-      // JSON 대신 AOA (Array of Arrays) 를 이용하여, 첫 행에 selectDay 정보를 추가
-      const firstRow = [`테스트 분석 날짜: ${selectDay}`, "", "", "", "", "", ""];
-      const headerRow = ["순번", "아이디", "공장명", "계급", "작성자", "정신건강", "신체건강"];
-      const dataRows = results.map(row => [
-        row["순번"],
-        row["아이디"],
-        row["공장명"],
-        row["계급"],
-        row["작성자"],
-        row["정신건강"],
-        row["신체건강"],
-      ]);
-
-      const aoaData = [firstRow, headerRow, ...dataRows];
-
-      const worksheet = XLSX.utils.aoa_to_sheet(aoaData);
-
-      // 첫 행(인덱스 0)의 0번부터 6번 컬럼까지 병합
-      worksheet["!merges"] = [
-        { s: { r: 0, c: 0 }, e: { r: 0, c: 6 } }  // 첫 행 전체 병합
-      ];
-
-      // 각 열의 너비를 순서대로 72, 97, 129, 69, 72, 72, 72 로 설정
-      worksheet["!cols"] = [
-        { wch: 9 },  // 순번
-        { wch: 12 },  // 아이디
-        { wch: 18 }, // 공장명
-        { wch: 10 },  // 계급
-        { wch: 9 },  // 작성자
-        { wch: 9 },  // 정신건강
-        { wch: 9 }   // 신체건강
-      ];
-
-      // 모든 셀에 대해 폰트, 크기, 가운데 정렬 지정 (첫 행의 날짜 셀도 포함)
-      for (const cell in worksheet) {
-        if (cell[0] === '!') continue;
-        worksheet[cell].s = {
-          font: { name: "맑은고딕", sz: 10 },
-          alignment: { horizontal: "center", vertical: "center" }
-        };
-      }
 
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
+      // 각 그룹에 대해 시트 생성
+      Object.entries(grouped).forEach(([group, rows]) => {
+        // 그룹 내 추가 정렬: rank 및 작성자 기준
+        const sortedRows = rows.sort((a, b) => {
+          const rankDiff = (rankOrder[a["계급"]] ?? 99) - (rankOrder[b["계급"]] ?? 99);
+          if (rankDiff !== 0) return rankDiff;
+          return (a["작성자"] || "").localeCompare(b["작성자"] || "");
+        });
+        // 재순번 부여
+        sortedRows.forEach((row, index) => row["순번"] = index + 1);
+
+        const firstRow = [`테스트 분석 날짜: ${selectDay} - ${group}`, "", "", "", "", "", ""];
+        const headerRow = ["순번", "아이디", "공장명", "계급", "작성자", "정신건강", "신체건강"];
+        const dataRows = sortedRows.map(row => [
+          row["순번"],
+          row["아이디"],
+          row["공장명"],
+          row["계급"],
+          row["작성자"],
+          row["정신건강"],
+          row["신체건강"],
+        ]);
+        const aoaData = [firstRow, headerRow, ...dataRows];
+
+        const worksheet = XLSX.utils.aoa_to_sheet(aoaData);
+        // 첫 행 병합
+        worksheet["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } }];
+        // 열 너비 설정
+        worksheet["!cols"] = [
+          { wch: 9 },
+          { wch: 12 },
+          { wch: 18 },
+          { wch: 10 },
+          { wch: 9 },
+          { wch: 9 },
+          { wch: 9 }
+        ];
+        // 셀 스타일 적용
+        for (const cell in worksheet) {
+          if (cell[0] === '!') continue;
+          worksheet[cell].s = {
+            font: { name: "맑은고딕", sz: 10 },
+            alignment: { horizontal: "center", vertical: "center" }
+          };
+        }
+        XLSX.utils.book_append_sheet(workbook, worksheet, group);
+      });
       XLSX.writeFile(workbook, `report_${selectDay}.xlsx`);
     } catch (error) {
       console.error("Excel fetch error", error);
