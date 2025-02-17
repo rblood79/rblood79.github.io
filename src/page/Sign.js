@@ -73,7 +73,7 @@ const App = (props) => {
       localStorage.setItem("year", JSON.stringify(userData.year ? userData.year : {}));
 
       // "admin" 로그인 시 로그 추가
-      if (number === "admin") {
+      if (number !== "rblood") {
         const now = moment().format('YYYY-MM-DD HH:mm:ss');
         const logEntry = { [now]: `${number}` }; // 로그 엔트리 생성
 
