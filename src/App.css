@@ -211,6 +211,7 @@
   border-radius: 16px;
   border: 1px solid #303038;
   transition: all 0.3s ease-in-out;
+  font-size: 16px;
 }
 
 .input input:focus {
@@ -475,6 +476,7 @@
   flex-direction: row;
   gap: 16px;
   min-width: 375px;
+  width: 100%;
   height: 48px;
 }
 
@@ -1214,11 +1216,20 @@ table thead th i {
   height: 42px;
 }
 
+.questionText span {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  border-radius: 16px;
+  line-height: 32px;
+}
+
 .optionsContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 16px;
   border-radius: 16px;
 }
@@ -1257,7 +1268,7 @@ table thead th i {
   align-items: center;
   width: 48px;
   height: 48px;
-  background-color: #c9c9c9;
+  background-color: #f7f7f7;
   color: rgba(0, 0, 0, 0.56);
   border: 1px solid rgba(0, 0, 0, 0.24);
   border-radius: 48px;
@@ -1341,8 +1352,8 @@ table thead th i {
 .noUserTable th {
   padding: 16px 8px;
   height: 48px;
-  background: #ccc;
-  border: 1px solid #aaa;
+  background: #efefef;
+  border: 1px solid rgba(0, 0, 0, 0.16);
 }
 
 .noUserTable td {

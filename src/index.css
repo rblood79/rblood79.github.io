@@ -11,6 +11,7 @@ html {
 body {
   margin: 0;
   background-color: #efefef;
+  background-color: #f7f7f7;
   color:#303038;
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-size: 13px;
@@ -53,7 +54,7 @@ button, a {
 
 .button, .buttonLeft, .buttonRight {
   outline: 0;
-  border: 1px solid rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(0, 0, 0, 0.16);
   background-color: #1e576a;
   color: #fff;
   padding: 0;
@@ -68,7 +69,7 @@ button, a {
 }
 
 .button:disabled {
-  background-color: #cbcbcb;
+  background-color: #eff2f5;
   color: #999;
   text-shadow: none;
   pointer-events: none;

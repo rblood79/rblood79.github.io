@@ -178,7 +178,7 @@ const App = (props) => {
         <h3 className='teamStatsTitle'>{currentTest.test_name} 테스트</h3>
         <div className='questionGroup'>
           <p className='questionText'>
-            <strong>{`Q${currentQuestionIndex + 1}.`}</strong> {currentTest.questions[currentQuestionIndex].question}
+            <strong>{`Q${currentQuestionIndex + 1}.`}</strong> <span>{currentTest.questions[currentQuestionIndex].question}</span>
           </p>
           <div className='optionsContainer'>
             {currentTest.questions[currentQuestionIndex].options.map((option, optionIndex) => (
