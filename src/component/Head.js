@@ -39,7 +39,7 @@ const App = (props) => {
           {
             isMobile &&
             <>
-              {user === 'rblood' &&<button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>}
+              <button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>
               <button className='logout' onClick={logOut} title="로그아웃"><i className="ri-logout-box-r-line"></i></button>
             </>
           }

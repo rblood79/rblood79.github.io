@@ -1,8 +1,24 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import moment from "moment";
 import * as XLSX from 'xlsx';
 import { factoryOrder, rankOrder } from '../utils/sortOrders';
+
+// 공장별 아이콘 및 배경 매핑 (최적화)
+const teamIconMapping = {
+  "기체정비공장": "ri-plane-fill",
+  "기관정비공장": "ri-git-merge-line",
+  "부품정비공장": "ri-settings-line",
+  "특수제작공장": "ri-tools-fill",
+  "KF-16 성능개량공장": "ri-dashboard-2-line"
+};
+const teamBgMapping = {
+  "기체정비공장": "#c0504e",
+  "기관정비공장": "#f79645",
+  "부품정비공장": "#4cacc6",
+  "특수제작공장": "#00b04f",
+  "KF-16 성능개량공장": "#8064a2"
+};
 
 const App = (props) => {
 
@@ -17,9 +33,8 @@ const App = (props) => {
   const today = moment().format("YYYY-MM-DD");
   const [selectDay, setSelectDay] = useState(today);
 
-  // excel 버튼 클릭 시 호출: 선택된 날짜의 모든 사용자 정보를 조회하여 
-  // answers 의 "test_1" 및 "test_2" 합계를 구하여 데이터에 추가하고 console 에 보여줌
-  const handleExcelClick = async () => {
+  // handleExcelClick 을 useCallback 으로 최적화
+  const handleExcelClick = useCallback(async () => {
     try {
       const usersRef = collection(props.manage, "meta", "users");
       const querySnapshot = await getDocs(usersRef);
@@ -145,7 +160,7 @@ const App = (props) => {
     } catch (error) {
       console.error("Excel fetch error", error);
     }
-  };
+  }, [props.manage, selectDay]);
 
   // "meta/users" 컬렉션에서 선택한 질문에 답한 사용자들 fetch 및 fullAnswers 저장
   useEffect(() => {
@@ -286,47 +301,8 @@ const App = (props) => {
             {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
             {['기체정비공장', '기관정비공장', '부품정비공장', '특수제작공장', 'KF-16 성능개량공장'].map(team => {
               const counts = teamStats[team] || { test_1: 0, test_2: 0 };
-              let iconClass = '';
-              switch (team) {
-                case '기체정비공장':
-                  iconClass = 'ri-plane-fill';
-                  break;
-                case '기관정비공장':
-                  iconClass = 'ri-git-merge-line';
-                  break;
-                case '부품정비공장':
-                  iconClass = 'ri-settings-line';
-                  break;
-                case '특수제작공장':
-                  iconClass = 'ri-tools-fill';
-                  break;
-                case 'KF-16 성능개량공장':
-                  iconClass = 'ri-dashboard-2-line';
-                  break;
-                default:
-                  iconClass = 'ri-flight-takeoff-line';
-              }
-              let backgroundColor = '#fff';
-              switch (team) {
-                case '기체정비공장':
-                  backgroundColor = '#c0504e';
-                  break;
-                case '기관정비공장':
-                  backgroundColor = '#f79645';
-                  break;
-                case '부품정비공장':
-                  backgroundColor = '#4cacc6';
-                  break;
-                case '특수제작공장':
-                  backgroundColor = '#00b04f';
-                  break;
-                case 'KF-16 성능개량공장':
-                  backgroundColor = '#8064a2';
-                  break;
-                default:
-                  backgroundColor = '#fff';
-              }
-
+              const iconClass = teamIconMapping[team] || 'ri-flight-takeoff-line';
+              const backgroundColor = teamBgMapping[team] || '#fff';
               return (
                 <div
                   key={team}

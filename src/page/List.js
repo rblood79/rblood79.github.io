@@ -1,43 +1,24 @@
-
 import 'remixicon/fonts/remixicon.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { query, where, onSnapshot, doc, updateDoc, getDoc } from 'firebase/firestore';
 import moment from "moment";
 
 const App = (props) => {
   // 두 테스트 데이터를 동시에 관리 (각각 mental_health, physical_health)
-  const [testsRecord, setTestsRecord] = useState({});
+  const [testsRecordRaw, setTestsRecordRaw] = useState({});
   // 현재 선택된 테스트 유형
   const [selectedType, setSelectedType] = useState("mental_health");
   // 현재 질문 인덱스
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   // 각 테스트별 질문 답변 저장 (예: { [testId]: { [questionIndex]: answer } })
-  const [answers, setAnswers] = useState({});
-  //const [storedAnswers, setStoredAnswers] = useState({});
-
-  // 컴포넌트 마운트 시 기존 사용자 answers 로드
-  /*useEffect(() => {
-    async function fetchUserStoredAnswers() {
-      const userId = localStorage.getItem('user');
-      if (!userId) return;
-      const userDocRef = doc(props.manage, "meta", "users", userId);
-      const userDocSnap = await getDoc(userDocRef);
-      if (userDocSnap.exists()) {
-        const data = userDocSnap.data();
-        if (data.answers) {
-          setAnswers(data.answers);
-        }
-      }
-    }
-    fetchUserStoredAnswers();
-  }, [props.manage]);*/
+  const [answersRaw, setAnswersRaw] = useState({});
 
   // mental_health 테스트 데이터 fetch
   useEffect(() => {
     const q = query(props.manage, where("test_type", "==", "mental_health"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedTest = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
-      setTestsRecord(prev => ({ ...prev, mental_health: fetchedTest }));
+      setTestsRecordRaw(prev => ({ ...prev, mental_health: fetchedTest }));
     });
     return () => unsubscribe();
   }, [props.manage]);
@@ -47,36 +28,40 @@ const App = (props) => {
     const q = query(props.manage, where("test_type", "==", "physical_health"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedTest = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
-      setTestsRecord(prev => ({ ...prev, physical_health: fetchedTest }));
+      setTestsRecordRaw(prev => ({ ...prev, physical_health: fetchedTest }));
     });
     return () => unsubscribe();
   }, [props.manage]);
 
-  // 현재 선택된 테스트가 없으면 표시
-  if (!testsRecord.mental_health || !testsRecord.physical_health) {
-    return <div className='resultContainer'>데이터가 없습니다.</div>;
-  }
+  const testsRecord = useMemo(() => testsRecordRaw, [testsRecordRaw]);
+  const answers = useMemo(() => answersRaw, [answersRaw]);
 
-  const currentTest = testsRecord[selectedType];
-  if (!currentTest || !currentTest.questions || currentTest.questions.length === 0) {
-    return <div className='resultContainer'>데이터가 없습니다.</div>;
-  }
-  // 현재 테스트에 대한 현재 질문의 선택값
-  const currentAnswer = answers[currentTest.id]?.[currentQuestionIndex] || "";
+  const currentTest = useMemo(() => testsRecord[selectedType], [testsRecord, selectedType]);
 
-  // 두 테스트의 완료 여부 계산
-  const mentalComplete = testsRecord.mental_health && answers[testsRecord.mental_health.id] &&
-    Object.keys(answers[testsRecord.mental_health.id]).length === testsRecord.mental_health.questions.length;
-  const physicalComplete = testsRecord.physical_health && answers[testsRecord.physical_health.id] &&
-    Object.keys(answers[testsRecord.physical_health.id]).length === testsRecord.physical_health.questions.length;
-  const allComplete = mentalComplete && physicalComplete;
+  const mentalComplete = useMemo(() => testsRecord.mental_health && answers[testsRecord.mental_health.id] &&
+    Object.keys(answers[testsRecord.mental_health.id]).length === testsRecord.mental_health.questions.length, [testsRecord, answers]);
 
-  // 수정된 handleNext 함수
-  const handleNext = () => {
+  const physicalComplete = useMemo(() => testsRecord.physical_health && answers[testsRecord.physical_health.id] &&
+    Object.keys(answers[testsRecord.physical_health.id]).length === testsRecord.physical_health.questions.length, [testsRecord, answers]);
+
+  const allComplete = useMemo(() => mentalComplete && physicalComplete, [mentalComplete, physicalComplete]);
+
+  // onChange 핸들러 메모이제이션
+  const handleOptionChange = useCallback((testId, questionIndex, value) => {
+    setAnswersRaw(prev => ({
+      ...prev,
+      [testId]: {
+        ...(prev[testId] || {}),
+        [questionIndex]: value
+      }
+    }));
+  }, []);
+
+  // handleNext를 useCallback으로 감쌉니다.
+  const handleNext = useCallback(() => {
     if (currentQuestionIndex < currentTest.questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      // 현재 선택한 타입의 마지막 질문인 경우 다른 테스트가 완료되지 않았다면 전환
       const otherType = selectedType === "mental_health" ? "physical_health" : "mental_health";
       const otherTestComplete = otherType === "mental_health" ? mentalComplete : physicalComplete;
       if (!otherTestComplete) {
@@ -86,10 +71,10 @@ const App = (props) => {
         alert("마지막 질문입니다.");
       }
     }
-  };
+  }, [currentQuestionIndex, currentTest?.questions?.length, selectedType, mentalComplete, physicalComplete]);
 
-  // 새로 추가: 사용자가 모든 질문에 답한 후, "users" 컬렉션의 문서에 답변을 저장하는 함수
-  const handleSubmit = async () => {
+  // handleSubmit를 useCallback으로 감쌉니다.
+  const handleSubmit = useCallback(async () => {
     const userId = localStorage.getItem('user');
     if (!userId) {
       alert('사용자 정보가 없습니다.');
@@ -97,28 +82,22 @@ const App = (props) => {
     }
     try {
       const userDocRef = doc(props.manage, "meta", "users", userId);
-      // 오늘 날짜를 key로 생성
       const today = moment().format("YYYY-MM-DD");
-
-      // 기존 답변 가져오기
       const userDocSnap = await getDoc(userDocRef);
       const prevAnswers = userDocSnap.exists() && userDocSnap.data().answers ? userDocSnap.data().answers : {};
-
       const transformedAnswers = {};
       Object.keys(answers).forEach(testId => {
         const testAnswers = answers[testId];
-        const testType = testsRecord.mental_health.id === testId ? "mental_health" : "physical_health";
+        const testType = testsRecord.mental_health?.id === testId ? "mental_health" : "physical_health";
         transformedAnswers[testId] = {};
         Object.keys(testAnswers).forEach(questionIndex => {
           const answer = testAnswers[questionIndex];
-          if (testType === "mental_health") {
-            transformedAnswers[testId][questionIndex] = answer === "없음" ? 0 : answer === "2일 이상" ? 1 : answer === "1주일 이상" ? 2 : 3;
-          } else if (testType === "physical_health") {
-            transformedAnswers[testId][questionIndex] = answer === "매우 맞음" ? 1 : answer === "맞음" ? 2 : answer === "보통" ? 3 : answer === "아님" ? 4 : 5;
-          }
+          transformedAnswers[testId][questionIndex] =
+            testType === "mental_health"
+              ? answer === "없음" ? 0 : answer === "2일 이상" ? 1 : answer === "1주일 이상" ? 2 : 3
+              : answer === "매우 맞음" ? 1 : answer === "맞음" ? 2 : answer === "보통" ? 3 : answer === "아님" ? 4 : 5;
         });
       });
-      // 오늘 날짜 key에 새 답변 저장 및 기존 데이터 병합
       const newAnswers = {
         ...prevAnswers,
         [today]: transformedAnswers
@@ -132,7 +111,19 @@ const App = (props) => {
       console.error('제출 실패', error);
       alert('제출에 실패하였습니다.');
     }
-  };
+  }, [props.manage, answers, testsRecord]);
+
+  // 현재 선택된 테스트가 없으면 표시
+  if (!testsRecord.mental_health || !testsRecord.physical_health) {
+    return <div className='resultContainer'>데이터가 없습니다.</div>;
+  }
+
+  if (!currentTest || !currentTest.questions || currentTest.questions.length === 0) {
+    return <div className='resultContainer'>데이터가 없습니다.</div>;
+  }
+
+  // 현재 테스트에 대한 현재 질문의 선택값
+  const currentAnswer = answers[currentTest.id]?.[currentQuestionIndex] || "";
 
   return (
     <div className='resultContainer'>
@@ -153,7 +144,7 @@ const App = (props) => {
         >
           <i className="ri-brain-line"></i>
           <h3 className='teamStatsText'>정신건강</h3>
-          <span>{mentalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.mental_health.id] || {}).length}/${testsRecord.mental_health.questions.length})`}</span>
+          <span>{mentalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.mental_health?.id] || {}).length}/${testsRecord.mental_health?.questions?.length})`}</span>
         </button>
         <button
           disabled={physicalComplete}
@@ -169,7 +160,7 @@ const App = (props) => {
         >
           <i className="ri-body-scan-line"></i>
           <h3 className='teamStatsText'>신체건강</h3>
-          <span>{physicalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.physical_health.id] || {}).length}/${testsRecord.physical_health.questions.length})`}</span>
+          <span>{physicalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.physical_health?.id] || {}).length}/${testsRecord.physical_health?.questions?.length})`}</span>
         </button>
       </div>
 
@@ -189,26 +180,11 @@ const App = (props) => {
                   name={`question-${currentTest.id}-${currentQuestionIndex}`}
                   value={option}
                   checked={currentAnswer === option}
-                  onChange={(e) =>
-                    setAnswers(prev => ({
-                      ...prev,
-                      [currentTest.id]: {
-                        ...(prev[currentTest.id] || {}),
-                        [currentQuestionIndex]: e.target.value
-                      }
-                    }))
-                  }
+                  onChange={(e) => handleOptionChange(currentTest.id, currentQuestionIndex, e.target.value)}
                 />
                 <label htmlFor={`question-${currentTest.id}-${currentQuestionIndex}-${optionIndex}`}>
 
                   <span className='optionIndex'>
-                    {/*<i className={
-                      optionIndex === 0 ? "ri-emotion-happy-line" :
-                        optionIndex === 1 ? "ri-emotion-normal-line" :
-                          optionIndex === 2 ? "ri-emotion-unhappy-line" :
-                            optionIndex === 3 ? "ri-emotion-sad-line" :
-                              "ri-emotion-happy-line"
-                    }></i>*/}
                     {
                       selectedType === "mental_health" ? optionIndex : optionIndex + 1
                     }
