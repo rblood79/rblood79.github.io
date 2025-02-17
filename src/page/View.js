@@ -498,7 +498,7 @@ const App = (props) => {
               return sortedNoUser.length > 0 ? (
                 <table className='noUserTable'>
                   <colgroup>
-                    <col style={{ width: '86px' }} />
+                    <col style={{ width: '80px' }} />
                     <col style={{ width: '128px' }} />
                     <col style={{ width: 'auto' }} />
                     <col style={{ width: 'auto' }} />
