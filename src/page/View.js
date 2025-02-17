@@ -24,12 +24,12 @@ const App = (props) => {
       const querySnapshot = await getDocs(usersRef);
       const results = [];
       let counter = 1; // 순번 시작값
-  
+
       querySnapshot.forEach(docSnap => {
         const data = docSnap.data();
         if (data.team && data.team.toLowerCase() === "admin") return;
         const { answers, ...rest } = data;
-  
+
         let totalTest1 = null;
         let totalTest2 = null;
         if (answers && answers[selectDay]) {
@@ -41,29 +41,29 @@ const App = (props) => {
             ? Object.values(dayAnswers.test_2).reduce((acc, cur) => acc + Number(cur), 0)
             : 0;
         }
-  
+
         // password 컬럼 제거 및 키명 변경 처리
         const newData = { ...rest, totalTest1, totalTest2, id: docSnap.id };
         delete newData.password;
-  
+
         newData["아이디"] = newData.id;
         delete newData.id;
-  
+
         newData["작성자"] = newData.name;
         delete newData.name;
-  
+
         newData["계급"] = newData.rank;
         delete newData.rank;
-  
+
         newData["공장명"] = newData.team;
         delete newData.team;
-  
+
         newData["정신건강"] = newData.totalTest1;
         delete newData.totalTest1;
-  
+
         newData["신체건강"] = newData.totalTest2;
         delete newData.totalTest2;
-  
+
         const orderedData = {
           "순번": counter++,
           "아이디": newData["아이디"],
@@ -73,11 +73,11 @@ const App = (props) => {
           "정신건강": newData["정신건강"],
           "신체건강": newData["신체건강"]
         };
-  
+
         results.push(orderedData);
       });
-      
-      // 추가: 지정 순서대로 정렬
+
+      // 추가: 지정 순서대로 정렬 후, "계급" (사용자 지정 순서) 및 "작성자" 기준으로 추가 정렬
       const factoryOrder = {
         "기체정비공장": 0,
         "기관정비공장": 1,
@@ -85,7 +85,34 @@ const App = (props) => {
         "특수제작공장": 3,
         "KF-16 성능개량공장": 4
       };
-      results.sort((a, b) => (factoryOrder[a["공장명"]] ?? 99) - (factoryOrder[b["공장명"]] ?? 99));
+      const rankOrder = {
+        "5급군무원": 0,
+        "6급군무원": 1,
+        "7급군무원": 2,
+        "8급군무원": 3,
+        "9급군무원": 4,
+        "준위": 5,
+        "원사": 6,
+        "상사": 7,
+        "중사": 8,
+        "하사": 9,
+        "병장": 10,
+        "상등병": 11,
+        "일등병": 12,
+        "이등병": 13
+      };
+      results.sort((a, b) => {
+        const factoryDiff = (factoryOrder[a["공장명"]] ?? 99) - (factoryOrder[b["공장명"]] ?? 99);
+        if (factoryDiff !== 0) return factoryDiff;
+        const rankDiff = (rankOrder[a["계급"]] ?? 99) - (rankOrder[b["계급"]] ?? 99);
+        if (rankDiff !== 0) return rankDiff;
+        return (a["작성자"] || "").localeCompare(b["작성자"] || "");
+      });
+      
+      // sorting 후, "순번" 을 순서대로 재지정
+      results.forEach((row, index) => {
+        row["순번"] = index + 1;
+      });
       
       // JSON 대신 AOA (Array of Arrays) 를 이용하여, 첫 행에 selectDay 정보를 추가
       const firstRow = [`테스트 분석 날짜: ${selectDay}`, "", "", "", "", "", ""];
@@ -99,16 +126,16 @@ const App = (props) => {
         row["정신건강"],
         row["신체건강"],
       ]);
-  
+
       const aoaData = [firstRow, headerRow, ...dataRows];
-  
+
       const worksheet = XLSX.utils.aoa_to_sheet(aoaData);
-  
+
       // 첫 행(인덱스 0)의 0번부터 6번 컬럼까지 병합
       worksheet["!merges"] = [
         { s: { r: 0, c: 0 }, e: { r: 0, c: 6 } }  // 첫 행 전체 병합
       ];
-  
+
       // 각 열의 너비를 순서대로 72, 97, 129, 69, 72, 72, 72 로 설정
       worksheet["!cols"] = [
         { wch: 9 },  // 순번
@@ -119,7 +146,7 @@ const App = (props) => {
         { wch: 9 },  // 정신건강
         { wch: 9 }   // 신체건강
       ];
-  
+
       // 모든 셀에 대해 폰트, 크기, 가운데 정렬 지정 (첫 행의 날짜 셀도 포함)
       for (const cell in worksheet) {
         if (cell[0] === '!') continue;
@@ -128,7 +155,7 @@ const App = (props) => {
           alignment: { horizontal: "center", vertical: "center" }
         };
       }
-  
+
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
       XLSX.writeFile(workbook, `report_${selectDay}.xlsx`);
@@ -268,6 +295,88 @@ const App = (props) => {
 
         <div className='tableContents'>
 
+          <section
+            id='section0'
+            className='teamStatsSection'
+            style={{ gap: selectedTeam ? '8px' : undefined, marginTop: '16px' }}
+          >
+            {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
+            {['기체정비공장', '기관정비공장', '부품정비공장', '특수제작공장', 'KF-16 성능개량공장'].map(team => {
+              const counts = teamStats[team] || { test_1: 0, test_2: 0 };
+              let iconClass = '';
+              switch (team) {
+                case '기체정비공장':
+                  iconClass = 'ri-plane-fill';
+                  break;
+                case '기관정비공장':
+                  iconClass = 'ri-git-merge-line';
+                  break;
+                case '부품정비공장':
+                  iconClass = 'ri-settings-line';
+                  break;
+                case '특수제작공장':
+                  iconClass = 'ri-tools-fill';
+                  break;
+                case 'KF-16 성능개량공장':
+                  iconClass = 'ri-dashboard-2-line';
+                  break;
+                default:
+                  iconClass = 'ri-flight-takeoff-line';
+              }
+              let backgroundColor = '#fff';
+              switch (team) {
+                case '기체정비공장':
+                  backgroundColor = '#c0504e';
+                  break;
+                case '기관정비공장':
+                  backgroundColor = '#f79645';
+                  break;
+                case '부품정비공장':
+                  backgroundColor = '#4cacc6';
+                  break;
+                case '특수제작공장':
+                  backgroundColor = '#00b04f';
+                  break;
+                case 'KF-16 성능개량공장':
+                  backgroundColor = '#8064a2';
+                  break;
+                default:
+                  backgroundColor = '#fff';
+              }
+
+              return (
+                <div
+                  key={team}
+                  className='teamStats'
+                  style={{
+                    background: selectedTeam === team ? backgroundColor : '#fff',
+                    color: selectedTeam === team ? '#fff' : '#000',
+                    aspectRatio: selectedTeam ? 0 : undefined,
+                  }}
+                  onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}
+                >
+                  <i className={iconClass} style={{ display: selectedTeam ? 'none' : undefined }}></i>
+                  <h3
+                    className='teamStatsText'
+                    style={{
+                      fontSize: selectedTeam ? '14px' : undefined,
+                      margin: selectedTeam ? 0 : undefined,
+                      color: selectedTeam === team ? '#fff' : backgroundColor,
+                    }}
+                  >
+                    {team}
+                  </h3>
+                  <p className='teamStatsMen' style={{ display: selectedTeam ? 'none' : undefined }}>
+                    정신건강 ({counts.test_1}명)
+                  </p>
+                  <p className='teamStatsPhy' style={{ display: selectedTeam ? 'none' : undefined }}>
+                    신체건강 ({counts.test_2}명)
+                  </p>
+                </div>
+              );
+            })}
+          </section>
+
           <section id='section1' className='teamStatsSection' style={{ gap: selectedTeam && '8px', marginTop: userAnswers.length > 0 && '16px' }}>
             {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
             {Object.entries(teamStats).map(([team, counts]) => {
@@ -387,11 +496,12 @@ const App = (props) => {
             )}
           </section>
 
-          
+
 
           <section id='section3' >
-            <h3 className='teamStatsTitle teamStatsUniq'>{selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)</h3>
-            {/* 수정: 미작성자 리스트를 공장명 기준 Excel 정렬 순서로 정렬 */}
+            <h3 className='teamStatsTitle teamStatsUniq'>
+              {selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)
+            </h3>
             {(() => {
               const factoryOrder = {
                 "기체정비공장": 0,
@@ -400,8 +510,30 @@ const App = (props) => {
                 "특수제작공장": 3,
                 "KF-16 성능개량공장": 4
               };
+              const rankOrder = {
+                "5급군무원": 0,
+                "6급군무원": 1,
+                "7급군무원": 2,
+                "8급군무원": 3,
+                "9급군무원": 4,
+                "준위": 5,
+                "원사": 6,
+                "상사": 7,
+                "중사": 8,
+                "하사": 9,
+                "병장": 10,
+                "상등병": 11,
+                "일등병": 12,
+                "이등병": 13
+              };
               const sortedNoUser = (selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser)
-                .sort((a, b) => (factoryOrder[a.team] ?? 99) - (factoryOrder[b.team] ?? 99));
+                .sort((a, b) => {
+                  const factoryDiff = (factoryOrder[a.team] ?? 99) - (factoryOrder[b.team] ?? 99);
+                  if (factoryDiff !== 0) return factoryDiff;
+                  const rankDiff = (rankOrder[a.rank] ?? 99) - (rankOrder[b.rank] ?? 99);
+                  if (rankDiff !== 0) return rankDiff;
+                  return (a.name || "").localeCompare(b.name || "");
+                });
               return sortedNoUser.length > 0 ? (
                 <table className='noUserTable'>
                   <colgroup>

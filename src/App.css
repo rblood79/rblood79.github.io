@@ -1412,6 +1412,10 @@ section {
   font-size: 18px;
 }
 
+#section1 {
+  display: none;
+}
+
 @media (max-width: 459.9px) {
 
   .headGroup {
