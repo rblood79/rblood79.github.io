@@ -1217,8 +1217,10 @@ table thead th i {
 .optionsContainer {
   display: flex;
   flex-direction: row;
-
   justify-content: space-between;
+  background: #fff;
+  padding: 16px;
+  border-radius: 16px;
 }
 
 .optionItem {
@@ -1234,6 +1236,7 @@ table thead th i {
 .optionIndex i {
   font-size: 34px;
 }
+
 .optionItem label {
   display: flex;
   flex-direction: column;
@@ -1243,7 +1246,7 @@ table thead th i {
 }
 
 .optionItem .optionText {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   margin-top: 8px;
 }
@@ -1252,12 +1255,12 @@ table thead th i {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   background-color: #c9c9c9;
   color: rgba(0, 0, 0, 0.56);
   border: 1px solid rgba(0, 0, 0, 0.24);
-  border-radius: 56px;
+  border-radius: 48px;
 
   font-size: 16px;
   font-weight: 900;
