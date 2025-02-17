@@ -124,7 +124,10 @@ const App = (props) => {
         [today]: transformedAnswers
       };
       await updateDoc(userDocRef, { answers: newAnswers });
-      alert('답변이 제출되었습니다.');
+      alert('답변이 제출되었습니다. 확인을 누르시면 로그아웃 됩니다.');
+      localStorage.removeItem('user');
+      localStorage.removeItem('year');
+      window.location.href = '/';
     } catch (error) {
       console.error('제출 실패', error);
       alert('제출에 실패하였습니다.');
