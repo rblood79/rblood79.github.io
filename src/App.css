@@ -1180,7 +1180,7 @@ table thead th i {
 }
 
 .questionGroup {
-  padding: 18px;
+  padding: 8px;
   border-radius: 0px 0px 16px 16px;
   background-color: #f5f5f5;
   border: 1px solid rgba(0, 0, 0, 0.24);
@@ -1220,8 +1220,9 @@ table thead th i {
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 16px;
-  border-radius: 16px;
+  border-radius: 12px;
   line-height: 32px;
+  width: 100%;
 }
 
 .optionsContainer {
@@ -1231,7 +1232,7 @@ table thead th i {
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 16px;
-  border-radius: 16px;
+  border-radius: 12px;
 }
 
 .optionItem {
