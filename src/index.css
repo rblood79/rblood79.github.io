@@ -10,8 +10,8 @@ html {
 
 body {
   margin: 0;
-  background-color: #efefef;
   background-color: #f7f7f7;
+  background: linear-gradient(0deg, #f7f7f7, #eeeff2);
   color:#303038;
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-size: 13px;

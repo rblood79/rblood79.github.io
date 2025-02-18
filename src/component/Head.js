@@ -35,14 +35,14 @@ const App = (props) => {
     <header className="head">
       <nav className='nav sub'>
         <div className='headGroup'>
-          <div className='headTitle'><img src={logo} alt='MND' /><span>{user === 'admin' ? '체크리스트 분석표' : '피로도 체크리스트'}</span></div>
-          {
+          <div className='headTitle'><img src={logo} alt='MND' /><span>{user === 'admin' ? '체크리스트 분석표' : '정비사 피로도 체크리스트'}</span></div>
+          {/*
             isMobile &&
             <>
               <button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>
               <button className='logout' onClick={logOut} title="로그아웃"><i className="ri-logout-box-r-line"></i></button>
             </>
-          }
+          */}
         </div>
         {user === 'rblood' &&
           <div className='navRes'>
@@ -51,9 +51,9 @@ const App = (props) => {
           </div>
         }
         {
-          !isMobile &&
+          
           <div className='headRight'>
-            <span>{user && "안녕하세요 " + user + " 님"}</span>
+            {!isMobile &&<span>{user && "안녕하세요 " + user + " 님"}</span>}
             <button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>
             <button className='logout' onClick={logOut} title="로그아웃"><i className="ri-logout-box-r-line"></i></button>
           </div>

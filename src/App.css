@@ -72,7 +72,6 @@
 }
 
 .headRight {
-  flex: 1;
   justify-content: flex-end;
   align-items: center;
   display: flex;
@@ -1450,7 +1449,7 @@ section {
 }
 
 .teamStatsUser {
-  
+  cursor: pointer;
 }
 
 .teamStatsUser:not(:first-child)::before {
@@ -1465,21 +1464,7 @@ section {
 
 @media (max-width: 459.9px) {
 
-  .headGroup {
-    display: grid;
-    grid-template-columns: 96px auto 48px 48px;
-    width: 100%;
-  }
-
-  .headGroup .change {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .headGroup .logout {
-    grid-column: 4;
-    grid-row: 1;
-  }
+  
 
   .label {
     border-top-width: 0;
@@ -1536,10 +1521,7 @@ section {
     display: none;
   }
 
-  .nav {
-    flex-direction: column !important;
-    padding: 0 !important;
-  }
+  
 
   .navRes {
     width: 100% !important;
