@@ -153,7 +153,6 @@ const App = (props) => {
       };
 
       const teamOrder = ["기체정비공장", "기관정비공장", "부품정비공장", "특수제작공장", "KF-16 성능개량공장"];
-
       teamOrder.forEach(team => {
         const group = team;
         const rows = grouped[group] || [];
@@ -175,7 +174,9 @@ const App = (props) => {
             row["공장명"],
             row["계급"],
             row["작업자"],
-            ...Array.from(allTestIds).map(testId => row[`${testId} 점수`])
+            row["test_1 점수"],
+            row["test_2 점수"],
+            //...Array.from(allTestIds).map(testId => row[`${testId} 점수`])
           ];
         });
         const aoaData = [headerRow0, headerRow, ...dataRows];
