@@ -127,7 +127,7 @@ const App = (props) => {
         // 테스트별 컬럼명 생성 및 데이터 할당
         const orderedData = { "순번": counter++, "아이디": newData["아이디"], "공장명": newData["공장명"], "계급": newData["계급"], "작업자": newData["작업자"] };
         Object.keys(testTotals).forEach(testId => {
-          orderedData[`${testId} 점수`] = newData[testId];
+          orderedData[`${testId}점수`] = newData[testId];
           delete newData[testId];
         });
 
@@ -174,8 +174,8 @@ const App = (props) => {
             row["공장명"],
             row["계급"],
             row["작업자"],
-            row["test_1 점수"],
-            row["test_2 점수"],
+            row["test_1점수"],
+            row["test_2점수"],
             //...Array.from(allTestIds).map(testId => row[`${testId} 점수`])
           ];
         });
