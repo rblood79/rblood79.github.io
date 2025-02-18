@@ -675,7 +675,7 @@ const App = (props) => {
                   </thead>
                   <tbody>
                     {sortedNoUser.map(u => (
-                      <tr key={u.id} onClick={() => console.log("사용자정보", u)}>
+                      <tr key={u.id} >
                         <td>{u.number}</td>
                         <td>{u.team}</td>
                         <td>{u.rank}</td>
