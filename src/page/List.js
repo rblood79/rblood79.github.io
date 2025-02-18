@@ -15,20 +15,13 @@ const App = (props) => {
 
   // mental_health 테스트 데이터 fetch
   useEffect(() => {
-    const q = query(props.manage, where("test_type", "==", "mental_health"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedTest = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
-      setTestsRecordRaw(prev => ({ ...prev, mental_health: fetchedTest }));
-    });
-    return () => unsubscribe();
-  }, [props.manage]);
-
-  // physical_health 테스트 데이터 fetch
-  useEffect(() => {
-    const q = query(props.manage, where("test_type", "==", "physical_health"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedTest = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
-      setTestsRecordRaw(prev => ({ ...prev, physical_health: fetchedTest }));
+    const unsubscribe = onSnapshot(query(props.manage, where("test_type", "!=", null)), (snapshot) => {
+      const fetchedTests = {};
+      snapshot.docs.forEach(doc => {
+        const testData = { id: doc.id, ...doc.data() };
+        fetchedTests[testData.test_type] = testData;
+      });
+      setTestsRecordRaw(fetchedTests);
     });
     return () => unsubscribe();
   }, [props.manage]);
@@ -38,13 +31,16 @@ const App = (props) => {
 
   const currentTest = useMemo(() => testsRecord[selectedType], [testsRecord, selectedType]);
 
-  const mentalComplete = useMemo(() => testsRecord.mental_health && answers[testsRecord.mental_health.id] &&
-    Object.keys(answers[testsRecord.mental_health.id]).length === testsRecord.mental_health.questions.length, [testsRecord, answers]);
+  // 테스트 완료 여부를 동적으로 계산하는 함수
+  const isTestComplete = useCallback((testType) => {
+    const test = testsRecord[testType];
+    return test && answers[test.id] && Object.keys(answers[test.id]).length === test.questions.length;
+  }, [testsRecord, answers]);
 
-  const physicalComplete = useMemo(() => testsRecord.physical_health && answers[testsRecord.physical_health.id] &&
-    Object.keys(answers[testsRecord.physical_health.id]).length === testsRecord.physical_health.questions.length, [testsRecord, answers]);
-
-  const allComplete = useMemo(() => mentalComplete && physicalComplete, [mentalComplete, physicalComplete]);
+  // 모든 테스트가 완료되었는지 확인
+  const allComplete = useMemo(() => {
+    return Object.keys(testsRecord).every(testType => isTestComplete(testType));
+  }, [testsRecord, isTestComplete]);
 
   // onChange 핸들러 메모이제이션
   const handleOptionChange = useCallback((testId, questionIndex, value) => {
@@ -62,16 +58,16 @@ const App = (props) => {
     if (currentQuestionIndex < currentTest.questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      const otherType = selectedType === "mental_health" ? "physical_health" : "mental_health";
-      const otherTestComplete = otherType === "mental_health" ? mentalComplete : physicalComplete;
-      if (!otherTestComplete) {
-        setSelectedType(otherType);
+      // 완료되지 않은 다른 테스트 유형을 찾아서 선택
+      const otherTypes = Object.keys(testsRecord).filter(type => type !== selectedType && !isTestComplete(type));
+      if (otherTypes.length > 0) {
+        setSelectedType(otherTypes[0]);
         setCurrentQuestionIndex(0);
       } else {
         alert("마지막 질문입니다.");
       }
     }
-  }, [currentQuestionIndex, currentTest?.questions?.length, selectedType, mentalComplete, physicalComplete]);
+  }, [currentQuestionIndex, currentTest?.questions?.length, selectedType, testsRecord, isTestComplete]);
 
   // handleSubmit를 useCallback으로 감쌉니다.
   const handleSubmit = useCallback(async () => {
@@ -129,39 +125,29 @@ const App = (props) => {
     <div className='resultContainer'>
       {/* 버튼 형태의 필터 선택 UI */}
       <div className='typeGroup'>
-        <button
-          disabled={mentalComplete}
-          className='typeButton'
-          onClick={() => {
-            setSelectedType("mental_health");
-            setCurrentQuestionIndex(0);
-          }}
-          style={{
-            backgroundColor: mentalComplete ? "#cbcbcb" : (selectedType === "mental_health" && "#3492b1"),
-            color: mentalComplete ? "#fff" : (selectedType === "mental_health" ? "#fff" : "#000"),
-
-          }}
-        >
-          <i className="ri-brain-line"></i>
-          <h3 className='teamStatsText'>정신건강</h3>
-          <span>{mentalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.mental_health?.id] || {}).length}/${testsRecord.mental_health?.questions?.length})`}</span>
-        </button>
-        <button
-          disabled={physicalComplete}
-          className='typeButton'
-          onClick={() => {
-            setSelectedType("physical_health");
-            setCurrentQuestionIndex(0);
-          }}
-          style={{
-            backgroundColor: physicalComplete ? "#cbcbcb" : (selectedType === "physical_health" && "#3492b1"),
-            color: physicalComplete ? "#fff" : (selectedType === "physical_health" ? "#fff" : "#000"),
-          }}
-        >
-          <i className="ri-body-scan-line"></i>
-          <h3 className='teamStatsText'>신체건강</h3>
-          <span>{physicalComplete ? " (완료)" : `(${Object.keys(answers?.[testsRecord.physical_health?.id] || {}).length}/${testsRecord.physical_health?.questions?.length})`}</span>
-        </button>
+        {Object.keys(testsRecord).map(testType => (
+          <button
+            key={testType}
+            disabled={isTestComplete(testType)}
+            className='typeButton'
+            onClick={() => {
+              setSelectedType(testType);
+              setCurrentQuestionIndex(0);
+            }}
+            style={{
+              backgroundColor: isTestComplete(testType) ? "#cbcbcb" : (selectedType === testType && "#3492b1"),
+              color: isTestComplete(testType) ? "#fff" : (selectedType === testType ? "#fff" : "#000"),
+            }}
+          >
+            {testType === "mental_health" ? <i className="ri-brain-line"></i> : <i className="ri-body-scan-line"></i>}
+            <h3 className='teamStatsText'>{testsRecord[testType].test_name}</h3>
+            <span>
+              {isTestComplete(testType)
+                ? " (완료)"
+                : `(${Object.keys(answers?.[testsRecord[testType]?.id] || {}).length}/${testsRecord[testType]?.questions?.length})`}
+            </span>
+          </button>
+        ))}
       </div>
 
       {/* 현재 테스트의 질문을 한 번에 하나씩 표시 */}

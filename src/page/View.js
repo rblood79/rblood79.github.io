@@ -36,6 +36,7 @@ const App = (props) => {
   // handleExcelClick 을 useCallback 으로 최적화
   const handleExcelClick = useCallback(async () => {
     try {
+      let allTestIds = new Set();
       const usersRef = collection(props.manage, "meta", "users");
       const querySnapshot = await getDocs(usersRef);
       const results = [];
@@ -46,26 +47,27 @@ const App = (props) => {
         if (data.team && data.team.toLowerCase() === "admin") return;
         const { answers, ...rest } = data;
 
-        let totalTest1 = null;
-        let totalTest2 = null;
+        // 각 테스트별 total 점수를 저장할 객체
+        const testTotals = {};
         if (answers && answers[selectDay]) {
           const dayAnswers = answers[selectDay];
-          totalTest1 = dayAnswers.test_1
-            ? Object.values(dayAnswers.test_1).reduce((acc, cur) => acc + Number(cur), 0)
-            : 0;
-          totalTest2 = dayAnswers.test_2
-            ? Object.values(dayAnswers.test_2).reduce((acc, cur) => acc + Number(cur), 0)
-            : 0;
+          // dayAnswers 객체의 각 testId에 대해 total 점수 계산
+          Object.keys(dayAnswers).forEach(testId => {
+            allTestIds.add(testId);
+            testTotals[testId] = dayAnswers[testId]
+              ? Object.values(dayAnswers[testId]).reduce((acc, cur) => acc + Number(cur), 0)
+              : 0;
+          });
         }
 
         // password 컬럼 제거 및 키명 변경 처리
-        const newData = { ...rest, totalTest1, totalTest2, id: docSnap.id };
+        const newData = Object.assign({}, rest, testTotals, { id: docSnap.id });
         delete newData.password;
 
         newData["아이디"] = newData.id;
         delete newData.id;
 
-        newData["작성자"] = newData.name;
+        newData["작업자"] = newData.name;
         delete newData.name;
 
         newData["계급"] = newData.rank;
@@ -74,21 +76,12 @@ const App = (props) => {
         newData["공장명"] = newData.team;
         delete newData.team;
 
-        newData["정신건강"] = newData.totalTest1;
-        delete newData.totalTest1;
-
-        newData["신체건강"] = newData.totalTest2;
-        delete newData.totalTest2;
-
-        const orderedData = {
-          "순번": counter++,
-          "아이디": newData["아이디"],
-          "공장명": newData["공장명"],
-          "계급": newData["계급"],
-          "작성자": newData["작성자"],
-          "정신건강": newData["정신건강"],
-          "신체건강": newData["신체건강"]
-        };
+        // 테스트별 컬럼명 생성 및 데이터 할당
+        const orderedData = { "순번": counter++, "아이디": newData["아이디"], "공장명": newData["공장명"], "계급": newData["계급"], "작업자": newData["작업자"] };
+        Object.keys(testTotals).forEach(testId => {
+          orderedData[`${testId} 점수`] = newData[testId];
+          delete newData[testId];
+        });
 
         results.push(orderedData);
       });
@@ -111,27 +104,33 @@ const App = (props) => {
         "KF-16 성능개량공장": "성능"
       };
 
-      Object.entries(grouped).forEach(([group, rows]) => {
+      const teamOrder = ["기체정비공장", "기관정비공장", "부품정비공장", "특수제작공장", "KF-16 성능개량공장"];
+
+      teamOrder.forEach(team => {
+        const group = team;
+        const rows = grouped[group] || [];
         const sheetName = sheetNameMapping[group] || group;
         const sortedRows = rows.sort((a, b) => {
           const rankDiff = (rankOrder[a["계급"]] ?? 99) - (rankOrder[b["계급"]] ?? 99);
           if (rankDiff !== 0) return rankDiff;
-          return (a["작성자"] || "").localeCompare(b["작성자"] || "");
+          return (a["작업자"] || "").localeCompare(b["작업자"] || "");
         });
         sortedRows.forEach((row, index) => row["순번"] = index + 1);
 
-        const firstRow = [`${sheetName} 체크리스트분석 날짜: ${selectDay}`, "", "", "", "", "", ""];
-        const headerRow = ["순번", "아이디", "공장명", "계급", "작성자", "정신건강", "신체건강"];
-        const dataRows = sortedRows.map(row => [
-          row["순번"],
-          row["아이디"],
-          row["공장명"],
-          row["계급"],
-          row["작성자"],
-          row["정신건강"],
-          row["신체건강"],
-        ]);
-        const aoaData = [firstRow, headerRow, ...dataRows];
+        // 엑셀 헤더 동적 생성
+        const headerRow0 = [selectDay, "", "", "", "", "", ""];
+        const headerRow = ["순번", "아이디", "공장명", "계급", "작업자", "정신건강", "신체건강"];
+        const dataRows = sortedRows.map(row => {
+          return [
+            row["순번"],
+            row["아이디"],
+            row["공장명"],
+            row["계급"],
+            row["작업자"],
+            ...Array.from(allTestIds).map(testId => row[`${testId} 점수`])
+          ];
+        });
+        const aoaData = [headerRow0, headerRow, ...dataRows];
 
         const worksheet = XLSX.utils.aoa_to_sheet(aoaData);
         // 첫 행 병합
@@ -143,15 +142,20 @@ const App = (props) => {
           { wch: 18 },
           { wch: 10 },
           { wch: 9 },
-          { wch: 9 },
-          { wch: 9 }
+          ...Array.from(allTestIds).map(() => ({ wch: 9 }))
         ];
         // 셀 스타일 적용
         for (const cell in worksheet) {
           if (cell[0] === '!') continue;
           worksheet[cell].s = {
             font: { name: "맑은고딕", sz: 10 },
-            alignment: { horizontal: "center", vertical: "center" }
+            alignment: { horizontal: "center", vertical: "center" },
+            border: {
+              top: { style: "thin", color: { auto: 1 } },
+              bottom: { style: "thin", color: { auto: 1 } },
+              left: { style: "thin", color: { auto: 1 } },
+              right: { style: "thin", color: { auto: 1 } }
+            }
           };
         }
         XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
@@ -212,60 +216,44 @@ const App = (props) => {
   // 팀별 통계 데이터 계산 (teamStats) - fullAnswers 기준
   const teamStats = useMemo(() => {
     const stats = {};
-    //console.log(userAnswers)
     userAnswers.forEach(u => {
       const team = u.team || "미지정";
       if (!stats[team]) {
-        stats[team] = { test_1: 0, test_2: 0 };
+        stats[team] = {};
       }
-      if (u.fullAnswers.test_1) {
-        const totalTest1 = Object.values(u.fullAnswers.test_1).reduce((acc, val) => acc + val, 0);
-        if (totalTest1 >= 10) {
-          stats[team].test_1++;
+      Object.keys(u.fullAnswers).forEach(testId => {
+        if (!stats[team][testId]) {
+          stats[team][testId] = 0;
         }
-      }
-      if (u.fullAnswers.test_2) {
-        const totalTest2 = Object.values(u.fullAnswers.test_2).reduce((acc, val) => acc + val, 0);
-        if (totalTest2 >= 76) {
-          stats[team].test_2++;
+        const total = Object.values(u.fullAnswers[testId]).reduce((acc, val) => acc + val, 0);
+        // 특정 점수 이상인 경우 통계에 반영
+        if (testId === "test_1" && total >= 10) {
+          stats[team][testId]++;
+        } else if (testId === "test_2" && total >= 76) {
+          stats[team][testId]++;
+        } else if (total >= 50) {
+          stats[team][testId]++;
         }
-      }
+      });
     });
     return stats;
   }, [userAnswers]);
 
-
   // 새로 추가: mentalData 및 physicalData 계산
-  const mentalData = selectedTeam ? (() => {
+  const testData = useCallback((selectedTeam, testId, threshold) => {
     const arr = userAnswers.filter(u =>
       u.team === selectedTeam &&
-      u.fullAnswers.test_1 &&
-      Object.values(u.fullAnswers.test_1).reduce((acc, val) => acc + val, 0) >= 10
+      u.fullAnswers[testId] &&
+      Object.values(u.fullAnswers[testId]).reduce((acc, val) => acc + val, 0) >= threshold
     );
     return {
       count: arr.length,
       details: arr.map(u => {
-        const total = Object.values(u.fullAnswers.test_1).reduce((acc, val) => acc + val, 0);
+        const total = Object.values(u.fullAnswers[testId]).reduce((acc, val) => acc + val, 0);
         return `${u.rank} ${u.name} (${total}점)`;
       }).join(', ')
     };
-  })() : { count: 0, details: '' };
-
-  const physicalData = selectedTeam ? (() => {
-    const arr = userAnswers.filter(u =>
-      u.team === selectedTeam &&
-      u.fullAnswers.test_2 &&
-      Object.values(u.fullAnswers.test_2).reduce((acc, val) => acc + val, 0) >= 76
-    );
-    return {
-      count: arr.length,
-      details: arr.map(u => {
-        const total = Object.values(u.fullAnswers.test_2).reduce((acc, val) => acc + val, 0);
-        return `${u.rank} ${u.name} (${total}점)`;
-      }).join(', ')
-    };
-  })() : { count: 0, details: '' };
-
+  }, [userAnswers]);
 
   return (
     <div className='view'>
@@ -300,11 +288,11 @@ const App = (props) => {
           >
             {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
             {['기체정비공장', '기관정비공장', '부품정비공장', '특수제작공장', 'KF-16 성능개량공장'].map(team => {
-              const counts = teamStats[team] || { test_1: 0, test_2: 0 };
+              const counts = teamStats[team] || {};
               const iconClass = teamIconMapping[team] || 'ri-flight-takeoff-line';
               const backgroundColor = teamBgMapping[team] || '#fff';
-              return (
-                <div
+                return (
+                  <div
                   key={team}
                   className='teamStats'
                   style={{
@@ -313,26 +301,35 @@ const App = (props) => {
                     aspectRatio: selectedTeam ? 0 : undefined,
                   }}
                   onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}
-                >
+                  >
                   <i className={iconClass} style={{ display: selectedTeam ? 'none' : undefined }}></i>
                   <h3
                     className='teamStatsText'
                     style={{
-                      fontSize: selectedTeam ? '14px' : undefined,
-                      margin: selectedTeam ? 0 : undefined,
-                      color: selectedTeam === team ? '#fff' : backgroundColor,
+                    fontSize: selectedTeam ? '14px' : undefined,
+                    margin: selectedTeam ? 0 : undefined,
+                    color: selectedTeam === team ? '#fff' : backgroundColor,
                     }}
                   >
                     {team}
                   </h3>
-                  <p className='teamStatsMen' style={{ display: selectedTeam ? 'none' : undefined }}>
-                    정신건강 ({counts.test_1}명)
-                  </p>
-                  <p className='teamStatsPhy' style={{ display: selectedTeam ? 'none' : undefined }}>
-                    신체건강 ({counts.test_2}명)
-                  </p>
-                </div>
-              );
+                  {/* test_type 별로 통계 데이터 표시 */}
+                  {Object.keys(counts)
+                    .sort((a, b) => {
+                    const order = { test_1: 0, test_2: 1 };
+                    return (order[a] ?? 99) - (order[b] ?? 99);
+                    })
+                    .map(testId => (
+                    <p
+                      key={testId}
+                      className='teamStatsMen'
+                      style={{ display: selectedTeam ? 'none' : undefined }}
+                    >
+                      {`${testId === 'test_1' ? '정신건강' : testId === 'test_2' ? '신체건강' : testId} (${counts[testId]}명)`}
+                    </p>
+                    ))}
+                  </div>
+                );
             })}
           </section>
 
@@ -392,8 +389,12 @@ const App = (props) => {
                   onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}>
                   <i className={iconClass} style={{ display: selectedTeam && 'none' }}></i>
                   <h3 className='teamStatsText' style={{ fontSize: selectedTeam && '14px', margin: selectedTeam && 0, color: selectedTeam === team ? '#fff' : backgroundColor }}>{team}</h3>
-                  <p className='teamStatsMen' style={{ display: selectedTeam && 'none' }} >정신건강 ({counts.test_1}명)</p>
-                  <p className='teamStatsPhy' style={{ display: selectedTeam && 'none' }} >신체건강 ({counts.test_2}명)</p>
+                  {/* test_type 별로 통계 데이터 표시 */}
+                  {Object.keys(counts).map(testId => (
+                    <p key={testId} className='teamStatsMen' style={{ display: selectedTeam && 'none' }}>
+                      {`${testId} (${counts[testId]}명)`}
+                    </p>
+                  ))}
                 </div>
               );
             })}
@@ -415,13 +416,14 @@ const App = (props) => {
                     </tr>
                   </thead>
                   <tbody>
+                    {/* test_type 별로 데이터 표시 */}
                     <tr>
-                      <td>{`정신건강:${mentalData.count}명`}</td>
-                      <td>{mentalData.details}</td>
+                      <td>{`정신건강:${testData(selectedTeam, "test_1", 10).count}명`}</td>
+                      <td>{testData(selectedTeam, "test_1", 10).details}</td>
                     </tr>
                     <tr>
-                      <td>{`신체건강:${physicalData.count}명`}</td>
-                      <td>{physicalData.details}</td>
+                      <td>{`신체건강:${testData(selectedTeam, "test_2", 76).count}명`}</td>
+                      <td>{testData(selectedTeam, "test_2", 76).details}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -454,8 +456,6 @@ const App = (props) => {
               </div>
             )}
           </section>
-
-
 
           <section id='section3' >
             <h3 className='teamStatsTitle teamStatsUniq'>
