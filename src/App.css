@@ -1375,6 +1375,9 @@ table thead th i {
   border: 1px solid #d3d3d3;
   background-color: #fff;
   height: 48px;
+
+  word-break: keep-all;
+  line-height: 21px;
 }
 
 section {
@@ -1444,6 +1447,20 @@ section {
 
 #section1 {
   display: none;
+}
+
+.teamStatsUser {
+  
+}
+
+.teamStatsUser:not(:first-child)::before {
+  content: ',';
+  color: #a7a7a7;
+  padding: 0 4px;
+}
+
+.teamStatsUser.active{
+  color: #3189a6;
 }
 
 @media (max-width: 459.9px) {

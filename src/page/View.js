@@ -542,9 +542,8 @@ const App = (props) => {
                       <td>
                         {testData(selectedTeam, "test_1", 10).details.map((item, index) => (
                           <span
+                          className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "정신건강" ? " active" : ""}`}
                             key={index}
-                            style={{ cursor: "pointer", marginRight: "8px" }}
-                            //onClick={() => setSelectedUserDetail({ name: item.user.name, number: item.user.number, type: "정신건강", answers: getSingleTestAnswers(item.user.answers, "test_1") })}
                             onClick={() => {
                               if (
                               selectedUserDetail &&
@@ -572,9 +571,8 @@ const App = (props) => {
                       <td>
                         {testData(selectedTeam, "test_2", 76).details.map((item, index) => (
                           <span
+                          className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "신체건강" ? " active" : ""}`}
                             key={index}
-                            style={{ cursor: "pointer", marginRight: "8px" }}
-                            //onClick={() => setSelectedUserDetail({ name: item.user.name, number: item.user.number, type: "신체건강", answers: getSingleTestAnswers(item.user.answers, "test_2") })}
                             onClick={() => {
                               if (
                               selectedUserDetail &&
