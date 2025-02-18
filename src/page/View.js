@@ -3,6 +3,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import moment from "moment";
 import * as XLSX from 'xlsx';
 import { factoryOrder, rankOrder } from '../utils/sortOrders';
+import Chart from 'chart.js/auto';
 
 // 공장별 아이콘 및 배경 매핑 (최적화)
 const teamIconMapping = {
@@ -20,6 +21,46 @@ const teamBgMapping = {
   "KF-16 성능개량공장": "#8064a2"
 };
 
+// 추가: 모든 일자의 answers에서 test_1, test_2만 추출하는 헬퍼 함수
+/*const getTestAnswers = (answers) => {
+  if (!answers) return {};
+  const result = {};
+  Object.keys(answers).forEach(date => {
+    const day = answers[date];
+    ['test_1', 'test_2'].forEach(testId => {
+      if (day[testId]) {
+        if (!result[date]) result[date] = {};
+        result[date][testId] = day[testId];
+      }
+    });
+  });
+  return result;
+};*/
+
+// 추가: 단일 테스트 데이터만 추출하는 헬퍼 함수 정의
+const getSingleTestAnswers = (answers, testId) => {
+  if (!answers) return {};
+  const result = {};
+  Object.keys(answers).forEach(date => {
+    const day = answers[date];
+    if (day[testId]) {
+      result[date] = day[testId];
+    }
+  });
+  return result;
+};
+
+// 추가: 선택된 사용자의 단일 테스트 데이터 값을 모두 더하는 헬퍼 함수
+const sumTestAnswers = (answers) => {
+  const result = {};
+  Object.keys(answers).forEach(date => {
+    const inner = answers[date];
+    const sum = Object.values(inner).reduce((acc, val) => acc + Number(val), 0);
+    result[date] = sum;
+  });
+  return result;
+};
+
 const App = (props) => {
 
   // 선택한 질문 ID와 사용자 답변 리스트 상태
@@ -32,6 +73,13 @@ const App = (props) => {
   // 새로 추가: 날짜 상태 (기본값 "오늘날짜")
   const today = moment().format("YYYY-MM-DD");
   const [selectDay, setSelectDay] = useState(today);
+  // 추가: 선택된 사용자의 answers 데이터를 저장할 state
+  const [selectedUserDetail, setSelectedUserDetail] = useState(null);
+
+  // selectedTeam 이 변경될 때 selectedUserDetail 을 초기화하는 useEffect
+  useEffect(() => {
+    setSelectedUserDetail(null);
+  }, [selectedTeam]);
 
   // handleExcelClick 을 useCallback 으로 최적화
   const handleExcelClick = useCallback(async () => {
@@ -250,10 +298,82 @@ const App = (props) => {
       count: arr.length,
       details: arr.map(u => {
         const total = Object.values(u.fullAnswers[testId]).reduce((acc, val) => acc + val, 0);
-        return `${u.rank} ${u.name} (${total}점)`;
-      }).join(', ')
+        return { text: `${u.rank} ${u.name} (${total}점)`, user: u };
+      })
     };
   }, [userAnswers]);
+
+  // 추가: 선택된 사용자 데이터가 변경될 때 차트를 생성하는 useEffect 추가 (clean-up 포함)
+  useEffect(() => {
+    let chartInstance;
+    if (selectedUserDetail && selectedUserDetail.answers && Object.keys(selectedUserDetail.answers).length > 0) {
+      //console.log("차트 데이터", selectedUserDetail);
+      const sumData = sumTestAnswers(selectedUserDetail.answers);
+      const sortedLabels = Object.keys(sumData).sort((a, b) => new Date(a) - new Date(b));
+      const sortedData = sortedLabels.map(date => sumData[date]);
+      //console.log(sortedData)
+      const ctx = document.getElementById("userDetailChart");
+      if (ctx) {
+        chartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: sortedLabels,
+            datasets: [{
+              label: selectedUserDetail.type,
+              data: sortedData,
+              backgroundColor: "rgba(75, 192, 192, 0.6)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              x: {
+                title: { display: false },
+                ticks: {
+                  callback: function (value, index, values) {
+                    const total = values.length;
+                    const mid = Math.floor((total - 1) / 2);
+                    if (total >= 7) {
+                      if (index === 0 || index === mid || index === total - 1) {
+                        const date = this.getLabelForValue(value);
+                        return moment(date).format('MM-DD');
+                      }
+                      return '';
+                    }
+                    const date = this.getLabelForValue(value);
+                    return moment(date).format('MM-DD');
+                  }
+                }
+              },
+              y: {
+                /*grid: {
+                  color: function (context) {
+                    if (context.tick.value === 10) {
+                      return '#ff0000';
+                    }
+                    return '#efefef';
+                  },
+                },*/
+                title: { display: false },
+                beginAtZero: true,
+              }
+            },
+            plugins: {
+              title: {
+                display: false,
+              }
+            }
+          }
+        });
+      }
+    }
+    return () => {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+    }
+  }, [selectedUserDetail]);
 
   return (
     <div className='view'>
@@ -291,8 +411,8 @@ const App = (props) => {
               const counts = teamStats[team] || {};
               const iconClass = teamIconMapping[team] || 'ri-flight-takeoff-line';
               const backgroundColor = teamBgMapping[team] || '#fff';
-                return (
-                  <div
+              return (
+                <div
                   key={team}
                   className='teamStats'
                   style={{
@@ -301,14 +421,14 @@ const App = (props) => {
                     aspectRatio: selectedTeam ? 0 : undefined,
                   }}
                   onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}
-                  >
+                >
                   <i className={iconClass} style={{ display: selectedTeam ? 'none' : undefined }}></i>
                   <h3
                     className='teamStatsText'
                     style={{
-                    fontSize: selectedTeam ? '14px' : undefined,
-                    margin: selectedTeam ? 0 : undefined,
-                    color: selectedTeam === team ? '#fff' : backgroundColor,
+                      fontSize: selectedTeam ? '14px' : undefined,
+                      margin: selectedTeam ? 0 : undefined,
+                      color: selectedTeam === team ? '#fff' : backgroundColor,
                     }}
                   >
                     {team}
@@ -316,20 +436,20 @@ const App = (props) => {
                   {/* test_type 별로 통계 데이터 표시 */}
                   {Object.keys(counts)
                     .sort((a, b) => {
-                    const order = { test_1: 0, test_2: 1 };
-                    return (order[a] ?? 99) - (order[b] ?? 99);
+                      const order = { test_1: 0, test_2: 1 };
+                      return (order[a] ?? 99) - (order[b] ?? 99);
                     })
                     .map(testId => (
-                    <p
-                      key={testId}
-                      className='teamStatsMen'
-                      style={{ display: selectedTeam ? 'none' : undefined }}
-                    >
-                      {`${testId === 'test_1' ? '정신건강' : testId === 'test_2' ? '신체건강' : testId} (${counts[testId]}명)`}
-                    </p>
+                      <p
+                        key={testId}
+                        className='teamStatsMen'
+                        style={{ display: selectedTeam ? 'none' : undefined }}
+                      >
+                        {`${testId === 'test_1' ? '정신건강' : testId === 'test_2' ? '신체건강' : testId} (${counts[testId]}명)`}
+                      </p>
                     ))}
-                  </div>
-                );
+                </div>
+              );
             })}
           </section>
 
@@ -401,7 +521,7 @@ const App = (props) => {
           </section>
 
           <section id='section2'>
-            {selectedTeam && (
+            {selectedTeam ? (
               <div>
                 <h3 className='teamStatsTitle teamStatsRe'>{selectedTeam}의 테스트 분석표</h3>
                 <table className='noUserTable'>
@@ -416,18 +536,84 @@ const App = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* test_type 별로 데이터 표시 */}
                     <tr>
                       <td>{`정신건강:${testData(selectedTeam, "test_1", 10).count}명`}</td>
-                      <td>{testData(selectedTeam, "test_1", 10).details}</td>
+                      <td>
+                        {testData(selectedTeam, "test_1", 10).details.map((item, index) => (
+                          <span
+                            key={index}
+                            style={{ cursor: "pointer", marginRight: "8px" }}
+                            //onClick={() => setSelectedUserDetail({ name: item.user.name, number: item.user.number, type: "정신건강", answers: getSingleTestAnswers(item.user.answers, "test_1") })}
+                            onClick={() => {
+                              if (
+                              selectedUserDetail &&
+                              selectedUserDetail.number === item.user.number &&
+                              selectedUserDetail.type === "정신건강"
+                              ) {
+                              setSelectedUserDetail(null);
+                              } else {
+                              setSelectedUserDetail({
+                                name: item.user.name,
+                                number: item.user.number,
+                                type: "정신건강",
+                                answers: getSingleTestAnswers(item.user.answers, "test_1")
+                              });
+                              }
+                            }}
+                          >
+                            {item.text}
+                          </span>
+                        ))}
+                      </td>
                     </tr>
                     <tr>
                       <td>{`신체건강:${testData(selectedTeam, "test_2", 76).count}명`}</td>
-                      <td>{testData(selectedTeam, "test_2", 76).details}</td>
+                      <td>
+                        {testData(selectedTeam, "test_2", 76).details.map((item, index) => (
+                          <span
+                            key={index}
+                            style={{ cursor: "pointer", marginRight: "8px" }}
+                            //onClick={() => setSelectedUserDetail({ name: item.user.name, number: item.user.number, type: "신체건강", answers: getSingleTestAnswers(item.user.answers, "test_2") })}
+                            onClick={() => {
+                              if (
+                              selectedUserDetail &&
+                              selectedUserDetail.number === item.user.number &&
+                              selectedUserDetail.type === "신체건강"
+                              ) {
+                              setSelectedUserDetail(null);
+                              } else {
+                              setSelectedUserDetail({
+                                name: item.user.name,
+                                number: item.user.number,
+                                type: "신체건강",
+                                answers: getSingleTestAnswers(item.user.answers, "test_2")
+                              });
+                              }
+                            }}
+                          >
+                            {item.text}
+                          </span>
+                        ))}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
-
+                {selectedUserDetail && (
+                  <table className='noUserTable'>
+                    <thead>
+                      <tr>
+                        <th>{selectedUserDetail.name ? selectedUserDetail.number +" / "+selectedUserDetail.name + "님의 " + selectedUserDetail.type : "선택된 사용자"} 추세</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className='chartContainer'>
+                          <canvas id="userDetailChart"></canvas>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                )}
                 <table className='noUserTable'>
                   <colgroup>
                     <col style={{ width: '80px' }} />
@@ -454,15 +640,14 @@ const App = (props) => {
                   </tbody>
                 </table>
               </div>
-            )}
+            ) : null}
           </section>
 
-          <section id='section3' >
+          <section id='section3'>
             <h3 className='teamStatsTitle teamStatsUniq'>
               {selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)
             </h3>
             {(() => {
-              // import한 factoryOrder, rankOrder 로 정렬
               const sortedNoUser = (selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser)
                 .sort((a, b) => {
                   const factoryDiff = (factoryOrder[a.team] ?? 99) - (factoryOrder[b.team] ?? 99);
@@ -489,7 +674,7 @@ const App = (props) => {
                   </thead>
                   <tbody>
                     {sortedNoUser.map(u => (
-                      <tr key={u.id}>
+                      <tr key={u.id} onClick={() => console.log("사용자정보", u)}>
                         <td>{u.number}</td>
                         <td>{u.team}</td>
                         <td>{u.rank}</td>

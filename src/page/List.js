@@ -12,6 +12,9 @@ const App = (props) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   // 각 테스트별 질문 답변 저장 (예: { [testId]: { [questionIndex]: answer } })
   const [answersRaw, setAnswersRaw] = useState({});
+  // 날짜 선택 state
+  const today = moment().format("YYYY-MM-DD");
+  const [selectDay, setSelectDay] = useState(today);
 
   // mental_health 테스트 데이터 fetch
   useEffect(() => {
@@ -78,7 +81,7 @@ const App = (props) => {
     }
     try {
       const userDocRef = doc(props.manage, "meta", "users", userId);
-      const today = moment().format("YYYY-MM-DD");
+      //const today = moment().format("YYYY-MM-DD");
       const userDocSnap = await getDoc(userDocRef);
       const prevAnswers = userDocSnap.exists() && userDocSnap.data().answers ? userDocSnap.data().answers : {};
       const transformedAnswers = {};
@@ -96,7 +99,7 @@ const App = (props) => {
       });
       const newAnswers = {
         ...prevAnswers,
-        [today]: transformedAnswers
+        [selectDay]: transformedAnswers
       };
       await updateDoc(userDocRef, { answers: newAnswers });
       alert('답변이 제출되었습니다. 확인을 누르시면 로그아웃 됩니다.');
@@ -107,7 +110,7 @@ const App = (props) => {
       console.error('제출 실패', error);
       alert('제출에 실패하였습니다.');
     }
-  }, [props.manage, answers, testsRecord]);
+  }, [props.manage, answers, testsRecord, selectDay]);
 
   // 현재 선택된 테스트가 없으면 표시
   if (!testsRecord.mental_health || !testsRecord.physical_health) {
@@ -123,6 +126,17 @@ const App = (props) => {
 
   return (
     <div className='resultContainer'>
+      {
+      <input
+              type="date"
+              id="selectDay"
+              className='dayInput'
+              value={selectDay}
+              onChange={(e) => {
+                setSelectDay(e.target.value);
+              }}
+            />
+      }
       {/* 버튼 형태의 필터 선택 UI */}
       <div className='typeGroup'>
         {Object.keys(testsRecord).map(testType => (
