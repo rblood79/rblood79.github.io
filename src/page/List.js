@@ -126,7 +126,7 @@ const App = (props) => {
 
   return (
     <div className='resultContainer'>
-      {
+      {/*
       <input
               type="date"
               id="selectDay"
@@ -135,7 +135,7 @@ const App = (props) => {
               onChange={(e) => {
                 setSelectDay(e.target.value);
               }}
-            />
+            />*/
       }
       {/* 버튼 형태의 필터 선택 UI */}
       <div className='typeGroup'>
