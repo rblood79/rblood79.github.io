@@ -283,7 +283,7 @@
 .login .visual {
   position: relative;
   flex: 1;
-  
+
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   background-position: bottom;
@@ -1308,7 +1308,7 @@ table thead th i {
   grid-template-columns: repeat(5, 1fr);
 }
 
-.teamStatsSection.active .teamStats{
+.teamStatsSection.active .teamStats {
   border-radius: 0px;
   border-left-width: 0px;
 }
@@ -1317,21 +1317,21 @@ table thead th i {
   font-size: 21px;
 }
 
-.teamStatsSection.active .teamStats .teamStatsMen{
+.teamStatsSection.active .teamStats .teamStatsMen {
   display: none;
 }
 
-.teamStatsSection.active .teamStats .teamStatsText{
+.teamStatsSection.active .teamStats .teamStatsText {
   font-size: 12px;
   padding-top: 2px;
 }
 
-.teamStatsSection.active .teamStats:first-child{
+.teamStatsSection.active .teamStats:first-child {
   border-radius: 16px 0px 0px 16px;
   border-left-width: 1px;
 }
 
-.teamStatsSection.active .teamStats:last-child{
+.teamStatsSection.active .teamStats:last-child {
   border-radius: 0px 16px 16px 0px;
 }
 
@@ -1501,7 +1501,7 @@ section {
 
 @media (max-width: 459.9px) {
 
-  .teamStatsSection.active {
+  .teamStatsSection {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -1597,7 +1597,7 @@ section {
     min-width: 100px;
   }
 
-  
+
 
 
 }
