@@ -1291,7 +1291,7 @@ table thead th i {
 }
 
 .optionItem input:checked+label .optionIndex {
-  background-color: #1e576a;
+  background-color: #0073e6;
   color: #fff;
 }
 

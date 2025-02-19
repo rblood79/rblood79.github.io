@@ -150,7 +150,7 @@ const App = (props) => {
               setCurrentQuestionIndex(0);
             }}
             style={{
-              backgroundColor: isTestComplete(testType) ? "#cbcbcb" : (selectedType === testType && "#3492b1"),
+              backgroundColor: isTestComplete(testType) ? "#cbcbcb" : (selectedType === testType && "#5a9de0"),
               color: isTestComplete(testType) ? "#fff" : (selectedType === testType ? "#fff" : "#000"),
             }}
           >
