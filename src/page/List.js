@@ -14,7 +14,8 @@ const App = (props) => {
   const [answersRaw, setAnswersRaw] = useState({});
   // 날짜 선택 state
   const today = moment().format("YYYY-MM-DD");
-  const [selectDay, setSelectDay] = useState(today);
+  //const [selectDay, setSelectDay] = useState(today);
+  const [selectDay] = useState(today);
 
   // mental_health 테스트 데이터 fetch
   useEffect(() => {
