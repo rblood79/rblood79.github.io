@@ -1299,7 +1299,7 @@ table thead th i {
   display: grid;
   gap: 16px;
   width: 100%;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   margin-top: 16px;
 }
 
@@ -1502,7 +1502,7 @@ section {
 @media (max-width: 459.9px) {
 
   .teamStatsSection.active {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .label {
