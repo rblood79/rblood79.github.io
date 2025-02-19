@@ -267,7 +267,7 @@
   justify-content: center;
 }
 
-.login.change .title{
+.login.change .title {
   border: 1px solid rgba(0, 0, 0, 0.24);
   margin: 0;
   border-top-left-radius: 16px;
@@ -1299,12 +1299,45 @@ table thead th i {
   display: grid;
   gap: 16px;
   width: 100%;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 16px;
+}
+
+.teamStatsSection.active {
+  gap: 0px;
   grid-template-columns: repeat(5, 1fr);
+}
+
+.teamStatsSection.active .teamStats{
+  border-radius: 0px;
+  border-left-width: 0px;
+}
+
+.teamStatsSection.active .teamStats i {
+  font-size: 21px;
+}
+
+.teamStatsSection.active .teamStats .teamStatsMen{
+  display: none;
+}
+
+.teamStatsSection.active .teamStats .teamStatsText{
+  font-size: 12px;
+  padding-top: 2px;
+}
+
+.teamStatsSection.active .teamStats:first-child{
+  border-radius: 16px 0px 0px 16px;
+  border-left-width: 1px;
+}
+
+.teamStatsSection.active .teamStats:last-child{
+  border-radius: 0px 16px 16px 0px;
 }
 
 .teamStatsSection .teamStats {
   border: 1px solid rgba(0, 0, 0, 0.24);
-  padding: 8px 16px;
+  padding: 0px 16px;
   border-radius: 16px;
   cursor: pointer;
   display: flex;
@@ -1316,7 +1349,7 @@ table thead th i {
 
 .teamStatsSection .teamStats i {
   font-size: 36px;
-  color: #666;
+  color: #c9c9c9;
 }
 
 .teamStatsText {
@@ -1327,13 +1360,17 @@ table thead th i {
 .teamStatsTitle {
   border: 1px solid rgba(0, 0, 0, 0.24);
   margin: 0;
-  padding: 16px;
+  padding: 8px 16px;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   background: #8a8a8a;
   margin-top: 16px;
   color: #fff;
   font-size: 16px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .teamStatsUniq {
@@ -1458,13 +1495,13 @@ section {
   padding: 0 4px;
 }
 
-.teamStatsUser.active{
+.teamStatsUser.active {
   color: #3189a6;
 }
 
 @media (max-width: 459.9px) {
 
-  
+
 
   .label {
     border-top-width: 0;
@@ -1521,7 +1558,7 @@ section {
     display: none;
   }
 
-  
+
 
   .navRes {
     width: 100% !important;
@@ -1558,9 +1595,7 @@ section {
     min-width: 100px;
   }
 
-  .teamStatsSection {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  
 
 
 }

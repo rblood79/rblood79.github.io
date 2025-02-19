@@ -404,53 +404,63 @@ const App = (props) => {
 
           <section
             id='section0'
-            className='teamStatsSection'
-            style={{ gap: selectedTeam ? '8px' : undefined, marginTop: '16px' }}
+            className={`teamStatsSection${selectedTeam ? " active": ""}`}
           >
             {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
             {['기체정비공장', '기관정비공장', '부품정비공장', '특수제작공장', 'KF-16 성능개량공장'].map(team => {
               const counts = teamStats[team] || {};
               const iconClass = teamIconMapping[team] || 'ri-flight-takeoff-line';
               const backgroundColor = teamBgMapping[team] || '#fff';
-              return (
+                return (
                 <div
                   key={team}
                   className='teamStats'
                   style={{
-                    background: selectedTeam === team ? backgroundColor : '#fff',
-                    color: selectedTeam === team ? '#fff' : '#000',
-                    aspectRatio: selectedTeam ? 0 : undefined,
+                  background: selectedTeam === team ? backgroundColor : '#fff',
+                  color: selectedTeam === team ? '#fff' : '#000',
+                  aspectRatio: selectedTeam ? 0 : undefined,
                   }}
                   onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}
                 >
-                  <i className={iconClass} style={{ display: selectedTeam ? 'none' : undefined }}></i>
+                  <i className={iconClass} style={{ color: selectedTeam === team ? '#fff' : '#a6a6a6' }}></i>
                   <h3
-                    className='teamStatsText'
-                    style={{
-                      fontSize: selectedTeam ? '14px' : undefined,
-                      margin: selectedTeam ? 0 : undefined,
-                      color: selectedTeam === team ? '#fff' : backgroundColor,
-                    }}
+                  className='teamStatsText'
+                  style={{
+                    
+                    margin: selectedTeam ? 0 : undefined,
+                    color: selectedTeam === team ? '#fff' : backgroundColor,
+                  }}
                   >
-                    {team}
+                  {selectedTeam
+                    ? (team === "기체정비공장"
+                      ? "기체"
+                      : team === "기관정비공장"
+                      ? "기관"
+                      : team === "부품정비공장"
+                      ? "부품"
+                      : team === "특수제작공장"
+                      ? "제작"
+                      : team === "KF-16 성능개량공장"
+                      ? "성능"
+                      : team)
+                    : team}
                   </h3>
                   {/* test_type 별로 통계 데이터 표시 */}
                   {Object.keys(counts)
-                    .sort((a, b) => {
-                      const order = { test_1: 0, test_2: 1 };
-                      return (order[a] ?? 99) - (order[b] ?? 99);
-                    })
-                    .map(testId => (
-                      <p
-                        key={testId}
-                        className='teamStatsMen'
-                        style={{ display: selectedTeam ? 'none' : undefined }}
-                      >
-                        {`${testId === 'test_1' ? '정신건강' : testId === 'test_2' ? '신체건강' : testId} (${counts[testId]}명)`}
-                      </p>
-                    ))}
+                  .sort((a, b) => {
+                    const order = { test_1: 0, test_2: 1 };
+                    return (order[a] ?? 99) - (order[b] ?? 99);
+                  })
+                  .map(testId => (
+                    <p
+                    key={testId}
+                    className='teamStatsMen'
+                    >
+                    {`${testId === 'test_1' ? '정신건강' : testId === 'test_2' ? '신체건강' : testId} (${counts[testId]}명)`}
+                    </p>
+                  ))}
                 </div>
-              );
+                );
             })}
           </section>
 
@@ -644,7 +654,7 @@ const App = (props) => {
 
           <section id='section3'>
             <h3 className='teamStatsTitle teamStatsUniq'>
-              {selectedTeam ? selectedTeam : '전체'} 체크리스트 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)
+              {selectedTeam ? selectedTeam : '전체'} 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)
             </h3>
             {(() => {
               const sortedNoUser = (selectedTeam ? noUser.filter(u => u.team === selectedTeam) : noUser)
