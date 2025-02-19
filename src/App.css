@@ -1501,7 +1501,9 @@ section {
 
 @media (max-width: 459.9px) {
 
-
+  .teamStatsSection.active {
+    grid-template-columns: repeat(5, 1fr);
+  }
 
   .label {
     border-top-width: 0;
