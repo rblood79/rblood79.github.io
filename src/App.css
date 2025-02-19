@@ -1353,8 +1353,8 @@ table thead th i {
 }
 
 .teamStatsText {
-  margin: 8px;
-  font-size: 21px;
+  margin: 4px;
+  font-size: 16px;
 }
 
 .teamStatsTitle {
@@ -1388,7 +1388,7 @@ table thead th i {
 .teamStatsMen,
 .teamStatsPhy {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .noUserTable {

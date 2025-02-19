@@ -443,7 +443,17 @@ const App = (props) => {
                       : team === "KF-16 성능개량공장"
                       ? "성능"
                       : team)
-                    : team}
+                    : (team === "기체정비"
+                      ? "기체"
+                      : team === "기관정비"
+                      ? "기관"
+                      : team === "부품정비"
+                      ? "부품"
+                      : team === "특수제작"
+                      ? "제작"
+                      : team === "KF-16 성능개량"
+                      ? "성능"
+                      : team)}
                   </h3>
                   {/* test_type 별로 통계 데이터 표시 */}
                   {Object.keys(counts)
