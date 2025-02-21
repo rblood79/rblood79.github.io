@@ -14,8 +14,8 @@ const App = (props) => {
   const [answersRaw, setAnswersRaw] = useState({});
   // 날짜 선택 state
   const today = moment().format("YYYY-MM-DD");
-  //const [selectDay, setSelectDay] = useState(today);
-  const [selectDay] = useState(today);
+  const [selectDay, setSelectDay] = useState(today);
+  //const [selectDay] = useState(today);
 
   // mental_health 테스트 데이터 fetch
   useEffect(() => {
@@ -127,16 +127,17 @@ const App = (props) => {
 
   return (
     <div className='resultContainer'>
-      {/*
-      <input
-              type="date"
-              id="selectDay"
-              className='dayInput'
-              value={selectDay}
-              onChange={(e) => {
-                setSelectDay(e.target.value);
-              }}
-            />*/
+      {
+        localStorage.getItem('user') === 'rblood' &&
+        <input
+          type="date"
+          id="selectDay"
+          className='dayInput'
+          value={selectDay}
+          onChange={(e) => {
+            setSelectDay(e.target.value);
+          }}
+        />
       }
       {/* 버튼 형태의 필터 선택 UI */}
       <div className='typeGroup'>

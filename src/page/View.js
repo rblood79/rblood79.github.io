@@ -275,12 +275,18 @@ const App = (props) => {
           stats[team][testId] = 0;
         }
         const total = Object.values(u.fullAnswers[testId]).reduce((acc, val) => acc + val, 0);
+        
         // 특정 점수 이상인 경우 통계에 반영
-        if (testId === "test_1" && total >= 10) {
+        /*if (testId === "test_1" && total >= 10) {
           stats[team][testId]++;
         } else if (testId === "test_2" && total >= 76) {
           stats[team][testId]++;
         } else if (total >= 50) {
+          stats[team][testId]++;
+        }*/
+        if (testId === "test_1" && total >= 10) {
+          stats[team][testId]++;
+        } else if (testId === "test_2" && total >= 76) {
           stats[team][testId]++;
         }
       });
@@ -404,73 +410,73 @@ const App = (props) => {
 
           <section
             id='section0'
-            className={`teamStatsSection${selectedTeam ? " active": ""}`}
+            className={`teamStatsSection${selectedTeam ? " active" : ""}`}
           >
             {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
             {['기체정비공장', '기관정비공장', '부품정비공장', '특수제작공장', 'KF-16 성능개량공장'].map(team => {
               const counts = teamStats[team] || {};
               const iconClass = teamIconMapping[team] || 'ri-flight-takeoff-line';
               const backgroundColor = teamBgMapping[team] || '#fff';
-                return (
+              return (
                 <div
                   key={team}
                   className='teamStats'
                   style={{
-                  background: selectedTeam === team ? backgroundColor : '#fff',
-                  color: selectedTeam === team ? '#fff' : '#000',
-                  aspectRatio: selectedTeam ? 0 : undefined,
+                    background: selectedTeam === team ? backgroundColor : '#fff',
+                    color: selectedTeam === team ? '#fff' : '#000',
+                    aspectRatio: selectedTeam ? 0 : undefined,
                   }}
                   onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}
                 >
                   <i className={iconClass} style={{ color: selectedTeam === team ? '#fff' : '#a6a6a6' }}></i>
                   <h3
-                  className='teamStatsText'
-                  style={{
-                    
-                    margin: selectedTeam ? 0 : undefined,
-                    color: selectedTeam === team ? '#fff' : backgroundColor,
-                  }}
+                    className='teamStatsText'
+                    style={{
+
+                      margin: selectedTeam ? 0 : undefined,
+                      color: selectedTeam === team ? '#fff' : backgroundColor,
+                    }}
                   >
-                  {selectedTeam
-                    ? (team === "기체정비공장"
-                      ? "기체"
-                      : team === "기관정비공장"
-                      ? "기관"
-                      : team === "부품정비공장"
-                      ? "부품"
-                      : team === "특수제작공장"
-                      ? "제작"
-                      : team === "KF-16 성능개량공장"
-                      ? "성능"
-                      : team)
-                    : (team === "기체정비공장"
-                      ? "기체정비"
-                      : team === "기관정비공장"
-                      ? "기관정비"
-                      : team === "부품정비공장"
-                      ? "부품정비"
-                      : team === "특수제작공장"
-                      ? "특수제작"
-                      : team === "KF-16 성능개량공장"
-                      ? "성능개량"
-                      : team)}
+                    {selectedTeam
+                      ? (team === "기체정비공장"
+                        ? "기체"
+                        : team === "기관정비공장"
+                          ? "기관"
+                          : team === "부품정비공장"
+                            ? "부품"
+                            : team === "특수제작공장"
+                              ? "제작"
+                              : team === "KF-16 성능개량공장"
+                                ? "성능"
+                                : team)
+                      : (team === "기체정비공장"
+                        ? "기체정비"
+                        : team === "기관정비공장"
+                          ? "기관정비"
+                          : team === "부품정비공장"
+                            ? "부품정비"
+                            : team === "특수제작공장"
+                              ? "특수제작"
+                              : team === "KF-16 성능개량공장"
+                                ? "성능개량"
+                                : team)}
                   </h3>
                   {/* test_type 별로 통계 데이터 표시 */}
                   {Object.keys(counts)
-                  .sort((a, b) => {
-                    const order = { test_1: 0, test_2: 1 };
-                    return (order[a] ?? 99) - (order[b] ?? 99);
-                  })
-                  .map(testId => (
-                    <p
-                    key={testId}
-                    className='teamStatsMen'
-                    >
-                    {`${testId === 'test_1' ? '정신건강' : testId === 'test_2' ? '신체건강' : testId} (${counts[testId]}명)`}
-                    </p>
-                  ))}
+                    .sort((a, b) => {
+                      const order = { test_1: 0, test_2: 1 };
+                      return (order[a] ?? 99) - (order[b] ?? 99);
+                    })
+                    .map(testId => (
+                      <p
+                        key={testId}
+                        className='teamStatsMen'
+                      >
+                        {`${testId === 'test_1' ? '정신건강' : testId === 'test_2' ? '신체건강' : testId} (${counts[testId]}명)`}
+                      </p>
+                    ))}
                 </div>
-                );
+              );
             })}
           </section>
 
@@ -562,22 +568,22 @@ const App = (props) => {
                       <td>
                         {testData(selectedTeam, "test_1", 10).details.map((item, index) => (
                           <span
-                          className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "정신건강" ? " active" : ""}`}
+                            className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "정신건강" ? " active" : ""}`}
                             key={index}
                             onClick={() => {
                               if (
-                              selectedUserDetail &&
-                              selectedUserDetail.number === item.user.number &&
-                              selectedUserDetail.type === "정신건강"
+                                selectedUserDetail &&
+                                selectedUserDetail.number === item.user.number &&
+                                selectedUserDetail.type === "정신건강"
                               ) {
-                              setSelectedUserDetail(null);
+                                setSelectedUserDetail(null);
                               } else {
-                              setSelectedUserDetail({
-                                name: item.user.name,
-                                number: item.user.number,
-                                type: "정신건강",
-                                answers: getSingleTestAnswers(item.user.answers, "test_1")
-                              });
+                                setSelectedUserDetail({
+                                  name: item.user.name,
+                                  number: item.user.number,
+                                  type: "정신건강",
+                                  answers: getSingleTestAnswers(item.user.answers, "test_1")
+                                });
                               }
                             }}
                           >
@@ -591,22 +597,22 @@ const App = (props) => {
                       <td>
                         {testData(selectedTeam, "test_2", 76).details.map((item, index) => (
                           <span
-                          className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "신체건강" ? " active" : ""}`}
+                            className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "신체건강" ? " active" : ""}`}
                             key={index}
                             onClick={() => {
                               if (
-                              selectedUserDetail &&
-                              selectedUserDetail.number === item.user.number &&
-                              selectedUserDetail.type === "신체건강"
+                                selectedUserDetail &&
+                                selectedUserDetail.number === item.user.number &&
+                                selectedUserDetail.type === "신체건강"
                               ) {
-                              setSelectedUserDetail(null);
+                                setSelectedUserDetail(null);
                               } else {
-                              setSelectedUserDetail({
-                                name: item.user.name,
-                                number: item.user.number,
-                                type: "신체건강",
-                                answers: getSingleTestAnswers(item.user.answers, "test_2")
-                              });
+                                setSelectedUserDetail({
+                                  name: item.user.name,
+                                  number: item.user.number,
+                                  type: "신체건강",
+                                  answers: getSingleTestAnswers(item.user.answers, "test_2")
+                                });
                               }
                             }}
                           >
@@ -621,7 +627,7 @@ const App = (props) => {
                   <table className='noUserTable'>
                     <thead>
                       <tr>
-                        <th>{selectedUserDetail.name ? selectedUserDetail.number +" / "+selectedUserDetail.name + "님의 " + selectedUserDetail.type : "선택된 사용자"} 추세</th>
+                        <th>{selectedUserDetail.name ? selectedUserDetail.number + " / " + selectedUserDetail.name + "님의 " + selectedUserDetail.type : "선택된 사용자"} 추세</th>
                       </tr>
                     </thead>
                     <tbody>

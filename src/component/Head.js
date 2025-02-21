@@ -22,6 +22,10 @@ const App = (props) => {
     history.push('/change');
   }
 
+  const write = () => {
+    history.push('/write');
+  }
+
   /*useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
@@ -35,26 +39,18 @@ const App = (props) => {
     <header className="head">
       <nav className='nav sub'>
         <div className='headGroup'>
-          <div className='headTitle'><img src={logo} alt='MND' /><span>{user === 'admin' ? '체크리스트 분석표' : '정비사 피로도 체크리스트'}</span></div>
-          {/*
-            isMobile &&
-            <>
-              <button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>
-              <button className='logout' onClick={logOut} title="로그아웃"><i className="ri-logout-box-r-line"></i></button>
-            </>
-          */}
+          <div className='headTitle' onClick={()=>{history.push('/')}}><img src={logo} alt='MND' /><span>{user === 'admin' ? '체크리스트 분석표' : '정비사 피로도 체크리스트'}</span></div>
         </div>
-        {user === 'rblood' &&
-          <div className='navRes'>
-            <NavLink className='navButton' exact to="/" title="진단결과"><i className="ri-survey-line"></i><span>진단결과</span></NavLink>
-            <NavLink className='navButton' exact to="/write" title="자료등록"><i className="ri-pencil-line"></i><span>자료등록</span></NavLink>
-          </div>
-        }
+
         {
-          
+
           <div className='headRight'>
-            {!isMobile &&<span>{user && "안녕하세요 " + user + " 님"}</span>}
-            <button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>
+            {!isMobile && <span>{user && "안녕하세요 " + user + " 님"}</span>}
+            {user === 'rblood' ?
+              <button className='logout' onClick={write} title="자료등록"><i className="ri-pencil-line"></i></button> :
+              <button className='change' onClick={change} title="개인정보변경"><i className="ri-user-settings-line"></i></button>
+            }
+
             <button className='logout' onClick={logOut} title="로그아웃"><i className="ri-logout-box-r-line"></i></button>
           </div>
         }
