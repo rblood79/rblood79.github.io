@@ -1377,6 +1377,10 @@ table thead th i {
   margin-top: 0px;
 }
 
+.logContainer .noUserTable {
+  height: auto;
+}
+
 .sectionContents {
   background-color: #fff;
   display: flex;
