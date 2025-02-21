@@ -1377,10 +1377,6 @@ table thead th i {
   margin-top: 0px;
 }
 
-.logContainer .noUserTable {
-  height: auto;
-}
-
 .sectionContents {
   background-color: #fff;
   display: flex;
@@ -1449,7 +1445,7 @@ table thead th i {
   padding: 16px 4px;
   border: 1px solid #d3d3d3;
   background-color: #fff;
-  height: 48px;
+  height: auto;
 
   word-break: keep-all;
   line-height: 21px;
