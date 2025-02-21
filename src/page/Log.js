@@ -51,8 +51,8 @@ const Log = (props) => {
                     <table className='noUserTable'>
                         <thead>
                             <tr>
-                                <th>로그 시간</th>
-                                <th>사용자 번호</th>
+                                <th>시간</th>
+                                <th>사용자</th>
                             </tr>
                         </thead>
                         <tbody>
