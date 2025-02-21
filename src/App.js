@@ -14,6 +14,7 @@ import Write from './page/Write';
 import List from './page/List';
 import View from './page/View';
 import Change from './page/Change';
+import Log from './page/Log';
 
 // Import the functions you need from the SDKs you need
 //import { initializeApp } from "firebase/app";
@@ -39,10 +40,11 @@ const App = (props) => {
           <>
             {props.location.pathname !== '/change' && <Head path={props.location.pathname} />}
             <main className='main'>
-              <Route exact path="/" render={() => user === 'admin' ?<View manage={manageRef} /> : <List manage={manageRef} />} />
+              <Route exact path="/" render={() => user === 'admin' ? <View manage={manageRef} /> : user === 'rblood' ? <Log manage={manageRef} /> : <List manage={manageRef} />} />
               <Route path="/write" render={() => <Write manage={manageRef} />} />
               <Route path="/view" render={() => <View manage={manageRef} />} />
               <Route path="/change" render={() => <Change manage={manageRef} />} />
+              <Route path="/log" render={() => <Log manage={manageRef} />} />
             </main>
           </>
       }

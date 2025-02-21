@@ -1373,6 +1373,10 @@ table thead th i {
   justify-content: center;
 }
 
+.logContainer .teamStatsTitle {
+  margin-top: 0px;
+}
+
 .teamStatsUniq {
   background: #c8a86d;
 }
