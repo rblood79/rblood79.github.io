@@ -1377,6 +1377,37 @@ table thead th i {
   margin-top: 0px;
 }
 
+.sectionContents {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+.sectionContents>div {
+  width: 100%;
+  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionContents label{
+  margin-right: 8px;
+}
+
+.sectionContents input, .sectionContents textarea{
+  border: 1px solid #d3d3d3;
+  flex: 1;
+  height: 36px;
+}
+
+.sectionContents textarea{
+  height: 100px;
+}
+
 .teamStatsUniq {
   background: #c8a86d;
 }
@@ -1578,6 +1609,10 @@ section {
   }*/
   .controll .buttonContainer {
     min-width: 100%;
+  }
+
+  .controll.write{
+    margin-top: 16px;
   }
 
   .delTd {
