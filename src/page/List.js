@@ -139,6 +139,7 @@ const App = (props) => {
           }}
         />
       }
+      <h2 className='userTitle'>{selectDay}일 테스트를 진행합니다.</h2>
       {/* 버튼 형태의 필터 선택 UI */}
       <div className='typeGroup'>
         {Object.keys(testsRecord).map(testType => (

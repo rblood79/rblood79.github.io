@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import moment from "moment";
 import * as XLSX from 'xlsx';
 import { factoryOrder, rankOrder } from '../utils/sortOrders';
@@ -76,10 +76,43 @@ const App = (props) => {
   // 추가: 선택된 사용자의 answers 데이터를 저장할 state
   const [selectedUserDetail, setSelectedUserDetail] = useState(null);
 
+  const [points, setPoints] = useState({
+    test_1: 0,
+    test_2: 0
+  });
+
+  useEffect(() => {
+    async function fetchUserDocs() {
+      try {
+        const doc1Ref = doc(props.manage, "test_1");
+        const doc2Ref = doc(props.manage, "test_2");
+
+        const [doc1Snap, doc2Snap] = await Promise.all([
+          getDoc(doc1Ref),
+          getDoc(doc2Ref)
+        ]);
+
+        const newPoints = {
+          test_1: doc1Snap.exists() ? doc1Snap.data().test_point : 0,
+          test_2: doc2Snap.exists() ? doc2Snap.data().test_point : 0
+        };
+        setPoints(newPoints);
+        //console.log("Fetched points:", points.test_2);
+      } catch (error) {
+        console.error("Error fetching test points", error);
+      }
+    }
+    fetchUserDocs();
+  }, [props.manage]);
+
   // selectedTeam 이 변경될 때 selectedUserDetail 을 초기화하는 useEffect
   useEffect(() => {
     setSelectedUserDetail(null);
   }, [selectedTeam]);
+
+  const handleBackClick = useCallback(() => {
+    setSelectedTeam(null);
+  }, []);
 
   // handleExcelClick 을 useCallback 으로 최적화
   const handleExcelClick = useCallback(async () => {
@@ -275,24 +308,24 @@ const App = (props) => {
           stats[team][testId] = 0;
         }
         const total = Object.values(u.fullAnswers[testId]).reduce((acc, val) => acc + val, 0);
-        
+
         // 특정 점수 이상인 경우 통계에 반영
-        /*if (testId === "test_1" && total >= 10) {
+        /*if (testId === "test_1" && total >= points.test_1) {
           stats[team][testId]++;
-        } else if (testId === "test_2" && total >= 76) {
+        } else if (testId === "test_2" && total >= points.test_2) {
           stats[team][testId]++;
         } else if (total >= 50) {
           stats[team][testId]++;
         }*/
-        if (testId === "test_1" && total >= 10) {
+        if (testId === "test_1" && total >= points.test_1) {
           stats[team][testId]++;
-        } else if (testId === "test_2" && total >= 76) {
+        } else if (testId === "test_2" && total >= points.test_2) {
           stats[team][testId]++;
         }
       });
     });
     return stats;
-  }, [userAnswers]);
+  }, [userAnswers, points.test_1, points.test_2]);
 
   // 새로 추가: mentalData 및 physicalData 계산
   const testData = useCallback((selectedTeam, testId, threshold) => {
@@ -385,7 +418,11 @@ const App = (props) => {
   return (
     <div className='view'>
       <div className='users'>
-        <div className='controll'>
+        <div className='controll calendar'>
+
+          <button className='button teamBack' onClick={handleBackClick}>
+            <i className="ri-arrow-left-s-line"></i>
+          </button>
 
           {/* 새로 추가: 날짜 선택 input */}
           <div className="day-selector">
@@ -401,7 +438,7 @@ const App = (props) => {
               }}
             />
           </div>
-          <button className='excel' onClick={handleExcelClick}>
+          <button className='button excel' onClick={handleExcelClick}>
             <i className="ri-file-excel-2-line"></i>
           </button>
         </div>
@@ -480,73 +517,6 @@ const App = (props) => {
             })}
           </section>
 
-          <section id='section1' className='teamStatsSection' style={{ gap: selectedTeam && '8px', marginTop: userAnswers.length > 0 && '16px' }}>
-            {/* team 기준 통계 데이터 표시 + 클릭 시 선택 처리 */}
-            {Object.entries(teamStats).map(([team, counts]) => {
-              let iconClass = '';
-              switch (team) {
-                case '기체정비공장':
-                  iconClass = 'ri-plane-fill';
-                  break;
-                case '기관정비공장':
-                  iconClass = 'ri-git-merge-line';
-                  break;
-                case '부품정비공장':
-                  iconClass = 'ri-settings-line';
-                  break;
-                case '특수제작공장':
-                  iconClass = 'ri-tools-fill';
-                  break;
-                case 'KF-16 성능개량공장':
-                  iconClass = 'ri-dashboard-2-line';
-                  break;
-                default:
-                  iconClass = 'ri-flight-takeoff-line';
-              }
-              let backgroundColor = '#fff';
-              switch (team) {
-                case '기체정비공장':
-                  backgroundColor = '#c0504e';
-                  break;
-                case '기관정비공장':
-                  backgroundColor = '#f79645';
-                  break;
-                case '부품정비공장':
-                  backgroundColor = '#4cacc6';
-                  break;
-                case '특수제작공장':
-                  backgroundColor = '#00b04f';
-                  break;
-                case 'KF-16 성능개량공장':
-                  backgroundColor = '#8064a2';
-                  break;
-                default:
-                  backgroundColor = '#fff';
-              }
-
-              return (
-                <div key={team}
-                  className='teamStats'
-                  style={{
-                    background: selectedTeam === team ? backgroundColor : '#fff',
-                    color: selectedTeam === team ? '#fff' : '#000',
-                    aspectRatio: selectedTeam && 0,
-
-                  }}
-                  onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}>
-                  <i className={iconClass} style={{ display: selectedTeam && 'none' }}></i>
-                  <h3 className='teamStatsText' style={{ fontSize: selectedTeam && '14px', margin: selectedTeam && 0, color: selectedTeam === team ? '#fff' : backgroundColor }}>{team}</h3>
-                  {/* test_type 별로 통계 데이터 표시 */}
-                  {Object.keys(counts).map(testId => (
-                    <p key={testId} className='teamStatsMen' style={{ display: selectedTeam && 'none' }}>
-                      {`${testId} (${counts[testId]}명)`}
-                    </p>
-                  ))}
-                </div>
-              );
-            })}
-          </section>
-
           <section id='section2'>
             {selectedTeam ? (
               <div>
@@ -564,9 +534,9 @@ const App = (props) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{`정신건강:${testData(selectedTeam, "test_1", 10).count}명`}</td>
+                      <td>{`정신건강:${testData(selectedTeam, "test_1", points.test_1).count}명`}</td>
                       <td>
-                        {testData(selectedTeam, "test_1", 10).details.map((item, index) => (
+                        {testData(selectedTeam, "test_1", points.test_1).details.map((item, index) => (
                           <span
                             className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "정신건강" ? " active" : ""}`}
                             key={index}
@@ -593,9 +563,9 @@ const App = (props) => {
                       </td>
                     </tr>
                     <tr>
-                      <td>{`신체건강:${testData(selectedTeam, "test_2", 76).count}명`}</td>
+                      <td>{`신체건강:${testData(selectedTeam, "test_2", points.test_2).count}명`}</td>
                       <td>
-                        {testData(selectedTeam, "test_2", 76).details.map((item, index) => (
+                        {testData(selectedTeam, "test_2", points.test_2).details.map((item, index) => (
                           <span
                             className={`teamStatsUser${selectedUserDetail && selectedUserDetail.number === item.user.number && selectedUserDetail.type === "신체건강" ? " active" : ""}`}
                             key={index}
@@ -655,12 +625,12 @@ const App = (props) => {
                   <tbody>
                     <tr>
                       <td>정신건강</td>
-                      <td>10점 이상</td>
+                      <td>{points.test_1}점 이상</td>
                       <td rowSpan={2}>피로도가 매우 높은 수준으로 정비활동에 뚜렷한 영향을 끼칠수 있음</td>
                     </tr>
                     <tr>
                       <td>신체건강</td>
-                      <td>76점 이상</td>
+                      <td>{points.test_2}점 이상</td>
                     </tr>
                   </tbody>
                 </table>
@@ -669,6 +639,84 @@ const App = (props) => {
           </section>
 
           <section id='section3'>
+            <h3 className='teamStatsTitle teamStatsUniq'>
+              {selectedTeam ? selectedTeam : '전체'} (
+              {selectedTeam
+                ? [...userAnswers, ...noUser].filter(u => u.team === selectedTeam).length
+                : [...userAnswers, ...noUser].length}명)
+            </h3>
+            {(() => {
+              const combinedUsers = [...userAnswers, ...noUser];
+              const sortedUsers = (selectedTeam
+                ? combinedUsers.filter(u => u.team === selectedTeam)
+                : combinedUsers)
+                .sort((a, b) => {
+                  const factoryDiff = (factoryOrder[a.team] ?? 99) - (factoryOrder[b.team] ?? 99);
+                  if (factoryDiff !== 0) return factoryDiff;
+                  const rankDiff = (rankOrder[a.rank] ?? 99) - (rankOrder[b.rank] ?? 99);
+                  if (rankDiff !== 0) return rankDiff;
+                  return (a.name || "").localeCompare(b.name || "");
+                });
+              return sortedUsers.length > 0 ? (
+                <table className='noUserTable'>
+                  <colgroup>
+                    <col style={{ width: '80px' }} />
+                    <col style={{ width: 'auto' }} />
+                    <col style={{ width: 'auto' }} />
+                    <col style={{ width: '52px' }} />
+                    <col style={{ width: '40px' }} />
+                    <col style={{ width: '40px' }} />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>아이디</th>
+                      <th>공장명</th>
+                      <th>계급</th>
+                      <th>작업자</th>
+                      <th>정신</th>
+                      <th>신체</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedUsers.map(u => {
+                      const mentalScore = u.fullAnswers && u.fullAnswers.test_1
+                        ? Object.values(u.fullAnswers.test_1).reduce((acc, curr) => acc + Number(curr), 0)
+                        : "-";
+                      const physicalScore = u.fullAnswers && u.fullAnswers.test_2
+                        ? Object.values(u.fullAnswers.test_2).reduce((acc, curr) => acc + Number(curr), 0)
+                        : "-";
+                      return (
+                        <tr key={u.id}>
+                          <td>{u.number}</td>
+                          <td>{
+                            u.team === "기체정비공장"
+                              ? "기체"
+                              : u.team === "기관정비공장"
+                                ? "기관"
+                                : u.team === "부품정비공장"
+                                  ? "부품"
+                                  : u.team === "특수제작공장"
+                                    ? "제작"
+                                    : u.team === "KF-16 성능개량공장"
+                                      ? "성능"
+                                      : u.team
+                          }</td>
+                          <td>{u.rank}</td>
+                          <td>{u.name}</td>
+                          <td>{mentalScore}</td>
+                          <td>{physicalScore}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : (
+                <p className='answerCrear'>모든 사용자의 정보가 없습니다.</p>
+              );
+            })()}
+          </section>
+
+          <section id='section4'>
             <h3 className='teamStatsTitle teamStatsUniq'>
               {selectedTeam ? selectedTeam : '전체'} 미작성자 ({selectedTeam ? noUser.filter(u => u.team === selectedTeam).length : noUser.length}명)
             </h3>

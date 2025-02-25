@@ -15,6 +15,7 @@ const App = (props) => {
   });
   const { number, pw } = inputs;
   const history = useHistory();
+  const today = moment().format("YYYY-MM-DD");
 
   // 로컬 스토리지에서 사용자 정보 불러오기
   useEffect(() => {
@@ -67,6 +68,15 @@ const App = (props) => {
     }
 
     if (userData.password === pw) {
+      // 오늘 날짜에 이미 답변이 있는지 체크
+      if (userData.answers && userData.answers[today]) {
+        const confirmed = window.confirm("오늘은 피로도 체크를 완료 하셨습니다.\n재검사를 하시려면 확인을 눌러주세요.");
+        if (!confirmed) {
+          setInputs({ number: '', pw: '' });
+          return;
+        }
+      }
+
       setUser(number);
       setYear(userData.year ? userData.year : {});
       localStorage.setItem('user', number);
@@ -75,16 +85,13 @@ const App = (props) => {
       // "admin" 로그인 시 로그 추가
       if (number !== "rblood") {
         const now = moment().format('YYYY-MM-DD HH:mm:ss');
-        const logEntry = { [now]: `${number}` }; // 로그 엔트리 생성
+        const logEntry = { [now]: `${number}` };
 
-        // 기존 로그 데이터 가져오기
         const iniData = iniDocSnap.data();
         const existingLog = iniData.log || {};
 
-        // 새 로그 엔트리와 기존 로그 병합
         const updatedLog = { ...existingLog, ...logEntry };
 
-        // 로그 업데이트
         await updateDoc(iniDocRef, { log: updatedLog });
       }
 
@@ -93,7 +100,7 @@ const App = (props) => {
       alert('비밀번호가 일치하지 않습니다.');
       setInputs({ number: '', pw: '' });
     }
-  }, [number, pw, props.manage, setUser, setYear, history]);
+  }, [number, pw, props.manage, setUser, setYear, history, today]);
 
   return (
     <div className='container'>
