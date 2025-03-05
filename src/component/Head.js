@@ -1,6 +1,6 @@
 
 import React, { useContext } from 'react';
-import { NavLink, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import context from './Context';
 import { isMobile } from 'react-device-detect';
 import logo from '../assets/logo.svg';

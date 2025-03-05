@@ -361,8 +361,8 @@ const App = (props) => {
             datasets: [{
               label: selectedUserDetail.type,
               data: sortedData,
-              backgroundColor: "rgba(75, 192, 192, 0.6)",
-              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(255, 0, 0, 0.6)",
+              borderColor: "rgb(235, 18, 18)",
               borderWidth: 1
             }]
           },
@@ -685,28 +685,44 @@ const App = (props) => {
                       const physicalScore = u.fullAnswers && u.fullAnswers.test_2
                         ? Object.values(u.fullAnswers.test_2).reduce((acc, curr) => acc + Number(curr), 0)
                         : "-";
-                      return (
+                        return (
                         <tr key={u.id}>
                           <td>{u.number}</td>
                           <td>{
-                            u.team === "기체정비공장"
-                              ? "기체"
-                              : u.team === "기관정비공장"
-                                ? "기관"
-                                : u.team === "부품정비공장"
-                                  ? "부품"
-                                  : u.team === "특수제작공장"
-                                    ? "제작"
-                                    : u.team === "KF-16 성능개량공장"
-                                      ? "성능"
-                                      : u.team
+                          u.team === "기체정비공장"
+                            ? "기체"
+                            : u.team === "기관정비공장"
+                            ? "기관"
+                            : u.team === "부품정비공장"
+                              ? "부품"
+                              : u.team === "특수제작공장"
+                              ? "제작"
+                              : u.team === "KF-16 성능개량공장"
+                                ? "성능"
+                                : u.team
                           }</td>
                           <td>{u.rank}</td>
                           <td>{u.name}</td>
-                          <td>{mentalScore}</td>
-                          <td>{physicalScore}</td>
+                          <td className={
+                          mentalScore >= points.test_1
+                            ? "red"
+                            : mentalScore >= points.test_1 * 0.5
+                            ? "yellow"
+                            : mentalScore > 0
+                            ? "green"
+                                  : undefined
+                          }><div className={mentalScore >= points.test_1 ? 'active':undefined}>{mentalScore}</div></td>
+                          <td className={
+                          physicalScore >= points.test_2
+                            ? "red"
+                            : physicalScore >= points.test_2 * 0.5
+                            ? "yellow"
+                            : physicalScore > 0
+                            ? "green"
+                                  : undefined
+                          }><div className={physicalScore >= points.test_2 ? 'active':undefined}>{physicalScore}</div></td>
                         </tr>
-                      );
+                        );
                     })}
                   </tbody>
                 </table>

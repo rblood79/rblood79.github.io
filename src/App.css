@@ -1448,6 +1448,7 @@ table thead th i {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  background-color: #fff;
 }
 
 .noUserTable th {
@@ -1462,9 +1463,39 @@ table thead th i {
   border: 1px solid #d3d3d3;
   background-color: #fff;
   height: auto;
-
   word-break: keep-all;
   line-height: 21px;
+}
+
+/*.noUserTable td.red {
+  background-color: rgba(255,0,0,0.24);
+}
+
+.noUserTable td.yellow {
+  background-color: rgba(255,255,0,0.24);
+}
+
+.noUserTable td.green {
+  background-color: rgba(0, 255, 0, 0.24);
+}*/
+
+.noUserTable td div {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0px solid rgba(0, 0, 0, 0.24);
+}
+
+.noUserTable td div.active {
+  background-color: #c0504e;
+  color: #fff;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.24);
 }
 
 section {
@@ -1568,7 +1599,7 @@ section {
 }
 
 .teamStatsUser.active {
-  color: #3189a6;
+  color: #bd120f;
 }
 
 .userTitle {
@@ -1592,6 +1623,7 @@ section {
 
   padding: 16px 16px 0 16px;
 }
+
 @media (max-width: 459.9px) {
 
   .teamStatsSection {
