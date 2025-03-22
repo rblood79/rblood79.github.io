@@ -641,12 +641,16 @@ const App = (props) => {
           <section id='section3'>
             <h3 className='teamStatsTitle teamStatsUniq'>
               {selectedTeam ? selectedTeam : '전체'} (
-              {selectedTeam
-                ? [...userAnswers, ...noUser].filter(u => u.team === selectedTeam).length
-                : [...userAnswers, ...noUser].length}명)
+              {selectedTeam ? userAnswers.filter(u => u.team === selectedTeam).length : userAnswers.length}/
+              {selectedTeam ? [...userAnswers, ...noUser].filter(u => u.team === selectedTeam).length : [...userAnswers, ...noUser].length}명
+              {" "}{selectedTeam
+                ? ((userAnswers.filter(u => u.team === selectedTeam).length / [...userAnswers, ...noUser].filter(u => u.team === selectedTeam).length) * 100).toFixed(2)
+                : ((userAnswers.length / [...userAnswers, ...noUser].length) * 100).toFixed(2)}%)
             </h3>
             {(() => {
+              //console.log(`참여인원수: ${selectedTeam ? userAnswers.filter(u => u.team === selectedTeam).length : userAnswers.length}`);
               const combinedUsers = [...userAnswers, ...noUser];
+
               const sortedUsers = (selectedTeam
                 ? combinedUsers.filter(u => u.team === selectedTeam)
                 : combinedUsers)
@@ -685,44 +689,44 @@ const App = (props) => {
                       const physicalScore = u.fullAnswers && u.fullAnswers.test_2
                         ? Object.values(u.fullAnswers.test_2).reduce((acc, curr) => acc + Number(curr), 0)
                         : "-";
-                        return (
+                      return (
                         <tr key={u.id}>
                           <td>{u.number}</td>
                           <td>{
-                          u.team === "기체정비공장"
-                            ? "기체"
-                            : u.team === "기관정비공장"
-                            ? "기관"
-                            : u.team === "부품정비공장"
-                              ? "부품"
-                              : u.team === "특수제작공장"
-                              ? "제작"
-                              : u.team === "KF-16 성능개량공장"
-                                ? "성능"
-                                : u.team
+                            u.team === "기체정비공장"
+                              ? "기체"
+                              : u.team === "기관정비공장"
+                                ? "기관"
+                                : u.team === "부품정비공장"
+                                  ? "부품"
+                                  : u.team === "특수제작공장"
+                                    ? "제작"
+                                    : u.team === "KF-16 성능개량공장"
+                                      ? "성능"
+                                      : u.team
                           }</td>
                           <td>{u.rank}</td>
                           <td>{u.name}</td>
                           <td className={
-                          mentalScore >= points.test_1
-                            ? "red"
-                            : mentalScore >= points.test_1 * 0.5
-                            ? "yellow"
-                            : mentalScore > 0
-                            ? "green"
+                            mentalScore >= points.test_1
+                              ? "red"
+                              : mentalScore >= points.test_1 * 0.5
+                                ? "yellow"
+                                : mentalScore > 0
+                                  ? "green"
                                   : undefined
-                          }><div className={mentalScore >= points.test_1 ? 'active':undefined}>{mentalScore}</div></td>
+                          }><div className={mentalScore >= points.test_1 ? 'active' : undefined}>{mentalScore}</div></td>
                           <td className={
-                          physicalScore >= points.test_2
-                            ? "red"
-                            : physicalScore >= points.test_2 * 0.5
-                            ? "yellow"
-                            : physicalScore > 0
-                            ? "green"
+                            physicalScore >= points.test_2
+                              ? "red"
+                              : physicalScore >= points.test_2 * 0.5
+                                ? "yellow"
+                                : physicalScore > 0
+                                  ? "green"
                                   : undefined
-                          }><div className={physicalScore >= points.test_2 ? 'active':undefined}>{physicalScore}</div></td>
+                          }><div className={physicalScore >= points.test_2 ? 'active' : undefined}>{physicalScore}</div></td>
                         </tr>
-                        );
+                      );
                     })}
                   </tbody>
                 </table>

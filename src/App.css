@@ -32,6 +32,9 @@
   padding-bottom: 0px;
   min-height: 48px;
   height: 48px;
+  position: sticky;
+  bottom: 0px;
+  background: #f7f7f7;
 }
 
 .headGroup {
@@ -483,7 +486,10 @@
 }
 
 .resultContainer .controll {
-  padding: 0 16px
+  padding: 0 16px;
+  position: sticky;
+  bottom: 48px;
+  background: linear-gradient(180deg, #f7f7f700, #f7f7f7);
 }
 
 .formBody+.controll,
@@ -1207,13 +1213,26 @@ table thead th i {
 
 .questionGroup {
   padding: 12px;
-  border-radius: 0px 0px 16px 16px;
+  padding-bottom: 0;
   background-color: #f5f5f5;
   border: 1px solid rgba(0, 0, 0, 0.24);
+  border-top-width: 0;
+  border-bottom-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+}
+
+.questionContents {
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  border-radius: 12px;
+}
+
+.questionGroup:last-child {
+  border-bottom-width: 1px;
+  border-radius: 0 0 12px 12px;
+  padding-bottom: 12px;
 }
 
 .questionContainer {
@@ -1234,7 +1253,6 @@ table thead th i {
   align-items: flex-start;
   flex-direction: column;
   text-align: left;
-  padding-bottom: 24px;
 }
 
 .questionText strong {
@@ -1246,8 +1264,9 @@ table thead th i {
 .questionText span {
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom-width: 0;
   padding: 16px;
-  border-radius: 12px;
+  border-radius: 12px 12px 0 0;
   line-height: 32px;
   width: 100%;
 }
@@ -1259,7 +1278,7 @@ table thead th i {
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 16px;
-  border-radius: 12px;
+  border-radius: 0 0 12px 12px;
 }
 
 .optionItem {
