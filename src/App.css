@@ -1224,6 +1224,7 @@ table thead th i {
   height: 100%;
 }
 
+
 .questionContents {
   border: 1px solid rgba(0, 0, 0, 0.24);
   border-radius: 12px;
@@ -1285,6 +1286,15 @@ table thead th i {
   border: 0px solid #d3d3d3;
   display: flex;
   outline: none !important;
+  color: #8a8a8a;
+}
+
+.optionItem:first-child {
+  color: #00bafe;
+}
+
+.optionItem:last-child {
+  color: #ff637d;
 }
 
 .optionItem input {

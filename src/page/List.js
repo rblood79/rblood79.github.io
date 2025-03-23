@@ -55,7 +55,7 @@ const App = (props) => {
       setSelectedType(incompleteTypes[0]);
       // Removed unused 'setCurrentQuestionIndex' call
       //console.log("다음 테스트로 이동합니다.");
-      window.scrollTo({ top: 0}); // 화면 상단으로 이동
+      window.scrollTo({ top: 0 }); // 화면 상단으로 이동
     } else {
       // 현재 테스트가 미완료이면 경고, 아니면 모든 테스트 완료 메시지
       if (!isTestComplete(selectedType)) {
@@ -220,24 +220,32 @@ const App = (props) => {
               </p>
               <div className='optionsContainer'>
                 {question.options && question.options.length > 0 ? (
-                  question.options.map((option, optionIndex) => (
-                    <div key={optionIndex} className='optionItem'>
-                      <input
-                        type="radio"
-                        id={`question-${currentTest.id}-${qIndex}-${optionIndex}`}
-                        name={`question-${currentTest.id}-${qIndex}`}
-                        value={option}
-                        checked={answers[currentTest.id]?.[qIndex] === option}
-                        onChange={(e) => handleOptionChange(currentTest.id, qIndex, e.target.value)}
-                      />
-                      <label htmlFor={`question-${currentTest.id}-${qIndex}-${optionIndex}`}>
-                        <span className='optionIndex'>
-                          {selectedType === "mental_health" ? optionIndex : optionIndex + 1}
-                        </span>
-                        <span className='optionText'>{option}</span>
-                      </label>
-                    </div>
-                  ))
+                  question.options
+                    .slice()
+                    .sort((a, b) => {
+                      if (selectedType === "physical_health" && [1, 4, 8, 9, 12, 13, 15, 16, 17, 18].includes(qIndex)) {
+                        return question.options.indexOf(b) - question.options.indexOf(a);
+                      }
+                      return question.options.indexOf(a) - question.options.indexOf(b);
+                    })
+                    .map((option, optionIndex) => (
+                      <div key={optionIndex} className='optionItem'>
+                        <input
+                          type="radio"
+                          id={`question-${currentTest.id}-${qIndex}-${optionIndex}`}
+                          name={`question-${currentTest.id}-${qIndex}`}
+                          value={option}
+                          checked={answers[currentTest.id]?.[qIndex] === option}
+                          onChange={(e) => handleOptionChange(currentTest.id, qIndex, e.target.value)}
+                        />
+                        <label htmlFor={`question-${currentTest.id}-${qIndex}-${optionIndex}`}>
+                          <span className='optionIndex'>
+                            {selectedType === "mental_health" ? optionIndex : optionIndex + 1}
+                          </span>
+                          <span className='optionText'>{option}</span>
+                        </label>
+                      </div>
+                    ))
                 ) : (
                   <p>등록된 보기가 없습니다.</p>
                 )}
