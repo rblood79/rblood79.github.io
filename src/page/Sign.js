@@ -114,6 +114,10 @@ const App = (props) => {
             </div>
             <img className='visualLogo' src={mnd} alt={'logo'} />
           </div>
+          <div className='notice'>
+            프로젝트가 지정한 요금제 이상 <br/>사용 발생하여 서비스 사용이 중지 될 수 있습니다.
+            
+          </div>
         </div>
 
         <form onSubmit={(e) => { e.preventDefault(); }}>
@@ -176,7 +180,9 @@ const App = (props) => {
             </div>
           </div>
         </form>
+
       </div>
+
     </div>
   );
 }
