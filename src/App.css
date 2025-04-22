@@ -772,6 +772,7 @@ tbody tr:hover td.delTd{
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  display:none;
 }
 
 /*.notice::before {
